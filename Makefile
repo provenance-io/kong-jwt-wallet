@@ -1,4 +1,4 @@
-all: lib
+all: lib bin
 
 lib: jwt-wallet.go plugin/main.go
 	go build -o jwt-wallet.so -buildmode plugin ./plugin/main.go
