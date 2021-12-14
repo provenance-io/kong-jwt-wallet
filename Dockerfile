@@ -3,7 +3,7 @@ RUN apk --no-cache --update add build-base && \
 	go install github.com/Kong/go-pluginserver@v0.6.1
 ADD . /app/
 WORKDIR /app
-RUN go build -o jwt-wallet.so -buildmode plugin ./plugin/main.go
+RUN go build -o jwt-wallet.so -buildmode plugin jwt-wallet.go
 
 FROM kong:2.0.4-alpine
 COPY --from=build /app/jwt-wallet.so /opt/go-plugins/
