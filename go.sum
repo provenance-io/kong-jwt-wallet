@@ -1,3 +1,4 @@
+github.com/Kong/go-pdk v0.6.0/go.mod h1:SrAne3YN4a7pNrlJ6Fb6xwa6kOhV2vDY/mqpb3X0fs4=
 github.com/Kong/go-pdk v0.6.1 h1:L0zZXyPnWzuGhaUOtoAiDV3V+KfnuMqlF//g5oISPkE=
 github.com/Kong/go-pdk v0.6.1/go.mod h1:SrAne3YN4a7pNrlJ6Fb6xwa6kOhV2vDY/mqpb3X0fs4=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
