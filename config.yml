@@ -1,10 +1,12 @@
 _format_version: "1.1"
 services:
-- url: https://reqres.in/api/users?page=2
+- name: jwt-test-api
+  url: https://github.com/jphorec
   routes:
   - paths:
     - "/"
   plugins:
-  - name: key-checker
+  - name: jwt-wallet
     config:
-      apikey: mysecretconsumerkey
+      network_uri: locoalhost:2000
+      rbac_service_uri: localhost:5000
