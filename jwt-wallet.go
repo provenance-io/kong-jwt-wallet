@@ -1,4 +1,4 @@
-package kong
+package jwtwallet
 
 import (
 	"fmt"
@@ -16,15 +16,15 @@ func New() interface{} {
 	return &Config{}
 }
 
-func (conf Config) Access(kong *pdk.PDK) {
-	jwt, ok := kong.Request.GetHeader("Authorization")
+func (conf *Config) Access(kong *pdk.PDK) {
+	header, ok := kong.Request.GetHeader("Authorization")
 
 	x := make(map[string][]string)
 	x["Content-Type"] = append(x["Content-Type"], "application/json")
 	if ok != nil {
 		kong.Response.Exit(401, "Missing access token", x)
 	}
-	kong.Log.Warn(jwt)
+	kong.Log.Warn(header)
 	key, err := kong.Request.GetQueryArg("key")
 	apiKey := conf.NetworkURI
 	tmp := conf.RBACServiceURI
@@ -53,5 +53,4 @@ func handleToken(tokenString string) {
 	} else {
 		fmt.Println(err)
 	}
-
 }
