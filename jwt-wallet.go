@@ -1,4 +1,4 @@
-package jwtwallet
+package main
 
 import (
 	"fmt"
