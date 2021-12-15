@@ -13,13 +13,14 @@ docker:
 	docker build -t kong-test .
 
 docker-run:
-	docker run -it --rm \
+	docker run -it --name kong-test --rm \
+		-v $(CURDIR):/opt/go-plugins \
 		-e "KONG_DATABASE=off" \
 		-e "KONG_GO_PLUGINS_DIR=/opt/go-plugins" \
 		-e "KONG_DECLARATIVE_CONFIG=/opt/config.yml" \
 		-e "KONG_PLUGINS=jwt-wallet" \
 		-e "KONG_PROXY_LISTEN=0.0.0.0:8000" \
-		-p 8000:8000 \
+		-p 9000:8000 \
 		kong-test
 
 
