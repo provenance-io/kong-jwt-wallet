@@ -4,8 +4,11 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/provenance-io/jwt-wallet/signing"
+	"strings"
 	"time"
+
+	"github.com/provenance-io/jwt-wallet/grants"
+	"github.com/provenance-io/jwt-wallet/signing"
 
 	"github.com/Kong/go-pdk"
 	secp256k1 "github.com/btcsuite/btcd/btcec"
@@ -14,8 +17,8 @@ import (
 )
 
 type Config struct {
-	NetworkURI     string `json:"network_uri"`
-	RBACServiceURI string `json:"rbac_service_uri"`
+	GRPCURL  string `json:"grpc_url"`
+	RolesURL string `json:"roles_url"`
 }
 
 func New() interface{} {
@@ -53,16 +56,36 @@ func (conf Config) Access(kong *pdk.PDK) {
 		kong.Response.Exit(401, "{}", x)
 		return
 	}
+
+	roles, err := handleRoles(tok, conf.RolesURL)
+	if err != nil {
+		kong.Log.Warn("err: " + err.Error())
+		return
+	}
+
+	kong.ServiceRequest.AddHeader("x-roles", strings.Join(roles, ","))
+
 	//
 	kong.Log.Warn(tok)
 	kong.Response.Exit(200, "{}", x)
 	return
 }
 
-
-
-
 var parser = jwt.NewParser(jwt.WithoutClaimsValidation())
+
+func handleRoles(token *jwt.Token, url string) ([]string, error) {
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if addr, ok := claims["addr"]; ok {
+			addrString := fmt.Sprintf("%v", addr)
+			roles, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
+			if err != nil {
+				return nil, err
+			}
+			return roles, nil
+		}
+		return nil, fmt.Errorf("Missing addr claim")
+	}
+}
 
 func handleToken(kong *pdk.PDK, tokenString string) (*jwt.Token, error) {
 	var claims jwt.RegisteredClaims
@@ -105,4 +128,3 @@ func main() {
 	fmt.Printf("sig:%s\n", newToken.Signature)
 	fmt.Printf("valid:%+v\n", newToken)
 }
-

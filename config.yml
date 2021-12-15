@@ -8,5 +8,5 @@ services:
   plugins:
   - name: jwt-wallet
     config:
-      network_uri: locoalhost:2000
-      rbac_service_uri: localhost:5000
+      grpc_url: locoalhost:2000
+      roles_url: http://localhost:8080/api/v1/rbac/account/
