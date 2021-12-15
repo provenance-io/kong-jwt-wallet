@@ -1,12 +1,14 @@
 package signing
 
 import (
+	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"strings"
+
 	"github.com/Kong/go-pdk"
 	secp256k1 "github.com/btcsuite/btcd/btcec"
 	"github.com/golang-jwt/jwt/v4"
-	"strings"
 )
 
 func init() {
@@ -42,7 +44,6 @@ func ParseKey(kong *pdk.PDK) func(token *jwt.Token) (interface{}, error) {
 	}
 }
 
-
 type secp256k1Sig struct {
 }
 
@@ -60,7 +61,10 @@ func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) e
 	if err != nil {
 		return fmt.Errorf("sig parse failed: %w", err)
 	}
-	ok := sig.Verify([]byte(signingString), key.(*secp256k1.PublicKey))
+
+	hasher := sha256.New()
+	hasher.Write([]byte(signingString))
+	ok := sig.Verify(hasher.Sum(nil), key.(*secp256k1.PublicKey))
 	if !ok {
 		return fmt.Errorf("sig verify failed")
 	}
@@ -68,7 +72,9 @@ func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) e
 }
 
 func (s secp256k1Sig) Sign(signingString string, key interface{}) (string, error) {
-	sig, err := key.(*secp256k1.PrivateKey).Sign([]byte(signingString))
+	hasher := sha256.New()
+	hasher.Write([]byte(signingString))
+	sig, err := key.(*secp256k1.PrivateKey).Sign(hasher.Sum(nil))
 	if err != nil {
 		return "", err
 	}
