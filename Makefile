@@ -9,12 +9,17 @@ bin: jwt-wallet.go main.go
 lint:
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs gofmt -w -d -s
 
+.PHONY: http
+http:
+	python3 -m http.server 8888 --directory http/
+
 docker:
 	docker build -t kong-test .
 
 docker-run:
-	docker run -it --name kong-test --rm \
+	docker run --net host -it --name kong-test --rm \
 		-v $(CURDIR):/opt/go-plugins \
+		-v $(CURDIR)/config.yml:/opt/config.yml \
 		-e "KONG_DATABASE=off" \
 		-e "KONG_GO_PLUGINS_DIR=/opt/go-plugins" \
 		-e "KONG_DECLARATIVE_CONFIG=/opt/config.yml" \
