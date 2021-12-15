@@ -20,12 +20,22 @@ type RoleResponse struct {
 			Type    string `json:"type"`
 		} `json:"org"`
 		Roles       []string      `json:"roles"`
-		AuthzGrants []interface{} `json:"authzGrants"`
+		AuthzGrants []string      `json:"authzGrants"`
 		Apps        []interface{} `json:"apps"`
 	} `json:"grants"`
 }
 
-func GetGrants(grantsUrl string, address string) ([]string, error) {
+type Grants struct {
+	Orgs []Org `json:"orgs"`
+}
+
+type Org struct {
+	Name        string   `json:"name"`
+	Roles       []string `json:"roles"`
+	AuthzGrants []string `json:"authzGrants"`
+}
+
+func GetGrants(grantsUrl string, address string) (*Grants, error) {
 	client := &http.Client{}
 
 	roleReq, _ := http.NewRequest("GET", grantsUrl, nil)
@@ -50,10 +60,15 @@ func GetGrants(grantsUrl string, address string) ([]string, error) {
 		return nil, err
 	}
 
-	roles := []string{}
-
+	var grants Grants
 	for _, grant := range roleResponse.Grants {
-		roles = append(roles, grant.Roles...)
+		org := Org{
+			Name:        grant.Org.Name,
+			Roles:       grant.Roles,
+			AuthzGrants: grant.AuthzGrants,
+		}
+
+		grants.Orgs = append(grants.Orgs, org)
 	}
-	return roles, nil
+	return &grants, nil
 }
