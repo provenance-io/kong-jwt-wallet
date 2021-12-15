@@ -11,20 +11,25 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+type Claims struct {
+	Addr string `json:"addr"`
+	jwt.RegisteredClaims
+}
+
 func init() {
 	jwt.RegisterSigningMethod("ES256K", NewSecp256k1Signer)
 }
 
 func ParseKey(kong *pdk.PDK) func(token *jwt.Token) (interface{}, error) {
 	return func(token *jwt.Token) (interface{}, error) {
-		claims, ok := token.Claims.(*jwt.RegisteredClaims)
+		claims, ok := token.Claims.(*Claims)
 		if !ok {
 			if kong != nil {
 				kong.Log.Warn("no claims")
 			}
 			return nil, fmt.Errorf("no claims")
 		}
-		sub := claims.Subject
+		sub := claims.RegisteredClaims.Subject
 		if sub == "" {
 			if kong != nil {
 				kong.Log.Warn("no subject")

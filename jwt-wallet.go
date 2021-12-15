@@ -74,22 +74,22 @@ func (conf Config) Access(kong *pdk.PDK) {
 var parser = jwt.NewParser(jwt.WithoutClaimsValidation())
 
 func handleRoles(token *jwt.Token, url string) ([]string, error) {
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		if addr, ok := claims["addr"]; ok {
-			addrString := fmt.Sprintf("%v", addr)
-			roles, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
-			if err != nil {
-				return nil, err
-			}
-			return roles, nil
+	fmt.Println(token.Claims.(*signing.Claims))
+	if claims, ok := token.Claims.(*signing.Claims); ok {
+		addr := claims.Addr
+
+		addrString := fmt.Sprintf("%v", addr)
+		roles, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
+		if err != nil {
+			return nil, err
 		}
-		return nil, fmt.Errorf("Missing addr claim")
+		return roles, nil
 	}
-	return nil, fmt.Errorf("Malformed claims")
+	return nil, fmt.Errorf("malformed claims")
 }
 
 func handleToken(kong *pdk.PDK, tokenString string) (*jwt.Token, error) {
-	var claims jwt.RegisteredClaims
+	var claims signing.Claims
 	token, err := parser.ParseWithClaims(tokenString, &claims, signing.ParseKey(kong))
 	if err != nil {
 		if kong != nil {
@@ -114,13 +114,8 @@ func main() {
 		panic(err)
 	}
 
-	type Claims struct {
-		Addr string `json:"addr"`
-		jwt.RegisteredClaims
-	}
-
-	claims := &Claims{
-		Addr: "tp1qs9sh60vv3ys0hkn9v9sgjdlvx442uyu5uftng",
+	claims := &signing.Claims{
+		Addr: "tp1uz5g72pvfrdnm9qnjpyvsnwc64d4wygyqanx2t",
 		RegisteredClaims: *&jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Date(2099, 1, 1, 0, 0, 0, 0, loc)),
 			IssuedAt:  jwt.NewNumericDate(time.Date(2021, 1, 1, 0, 0, 0, 0, loc)),
@@ -133,8 +128,14 @@ func main() {
 	sig, err := token.SignedString(prvk)
 	fmt.Printf("signed:%s\n", sig)
 
-	newClaims := jwt.RegisteredClaims{}
+	var newClaims signing.Claims
 	newToken, err := jwt.ParseWithClaims(sig, &newClaims, signing.ParseKey(nil))
+
+	roles, err := handleRoles(token, "http://localhost:8080/api/v1/rbac/account/")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("\nroles:%s\n", roles)
 	fmt.Printf("sig:%s\n", newToken.Signature)
 	fmt.Printf("valid:%+v\n", newToken)
 }
