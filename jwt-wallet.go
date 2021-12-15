@@ -114,13 +114,22 @@ func main() {
 		panic(err)
 	}
 
-	preClaims := jwt.RegisteredClaims{}
-	preClaims.Subject = base64.RawURLEncoding.EncodeToString(pubk.SerializeCompressed())
-	preClaims.Issuer = "provenance.io"
-	preClaims.IssuedAt = jwt.NewNumericDate(time.Date(2021, 1, 1, 0, 0, 0, 0, loc))
-	preClaims.ExpiresAt = jwt.NewNumericDate(time.Date(2099, 1, 1, 0, 0, 0, 0, loc))
+	type Claims struct {
+		Addr string `json:"addr"`
+		jwt.RegisteredClaims
+	}
 
-	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), preClaims)
+	claims := &Claims{
+		Addr: "tp1qs9sh60vv3ys0hkn9v9sgjdlvx442uyu5uftng",
+		RegisteredClaims: *&jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Date(2099, 1, 1, 0, 0, 0, 0, loc)),
+			IssuedAt:  jwt.NewNumericDate(time.Date(2021, 1, 1, 0, 0, 0, 0, loc)),
+			Issuer:    "provenance.io",
+			Subject:   base64.RawURLEncoding.EncodeToString(pubk.SerializeCompressed()),
+		},
+	}
+
+	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, err := token.SignedString(prvk)
 	fmt.Printf("signed:%s\n", sig)
 
