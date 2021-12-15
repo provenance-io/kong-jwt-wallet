@@ -82,11 +82,11 @@ func handleRoles(token *jwt.Token, url string) (*grants.Grants, error) {
 		addr := claims.Addr
 
 		addrString := fmt.Sprintf("%v", addr)
-		roles, err := grants.GetGrants(url, addrString) // temporary interpolation until better configuration solutions
+		grants, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
 		if err != nil {
 			return nil, err
 		}
-		return roles, nil
+		return grants, nil
 	}
 	return nil, fmt.Errorf("malformed claims")
 }
