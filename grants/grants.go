@@ -60,6 +60,10 @@ func GetGrants(grantsUrl string, address string) (*Grants, error) {
 		return nil, err
 	}
 
+	if len(roleResponse.Grants) == 0 {
+		return nil, fmt.Errorf("account doesn't exist in role service")
+	}
+
 	var grants Grants
 	for _, grant := range roleResponse.Grants {
 		org := Org{

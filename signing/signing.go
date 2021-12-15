@@ -64,7 +64,7 @@ func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) e
 
 	sig, err := secp256k1.ParseSignature(sigBytes, secp256k1.S256())
 	if err != nil {
-		return fmt.Errorf("sig parse failed: %w", err)
+		return fmt.Errorf("sig parse failed: %w, %x, %s, %s", err, sigBytes, signingString, signature)
 	}
 
 	hasher := sha256.New()
