@@ -17,8 +17,7 @@ import (
 )
 
 type Config struct {
-	GRPCURL  string `json:"grpc_url"`
-	RolesURL string `json:"roles_url"`
+	RBAC string `json:"rbac"`
 }
 
 func New() interface{} {
@@ -57,7 +56,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 
-	grants, err := handleRoles(tok, conf.RolesURL)
+	grants, err := handleRoles(tok, conf.RBAC)
 	if err != nil {
 		kong.Log.Warn("err: " + err.Error())
 		kong.Response.Exit(400, "account does not exist", x)
@@ -84,6 +83,7 @@ func handleRoles(token *jwt.Token, url string) (*grants.Grants, error) {
 
 		addrString := fmt.Sprintf("%v", addr)
 		grants, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
+
 		if err != nil {
 			return nil, err
 		}
