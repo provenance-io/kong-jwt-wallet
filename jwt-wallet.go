@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/provenance-io/jwt-wallet/grants"
@@ -57,33 +57,37 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 
-	roles, err := handleRoles(tok, conf.RolesURL)
+	grants, err := handleRoles(tok, conf.RolesURL)
 	if err != nil {
 		kong.Log.Warn("err: " + err.Error())
+		kong.Response.Exit(400, "account does not exist", x)
 		return
 	}
 
-	kong.ServiceRequest.AddHeader("x-roles", strings.Join(roles, ","))
-
+	grantsJson, err := json.Marshal(grants)
+	if err != nil {
+		kong.Response.Exit(500, "someting went wrong", x)
+		return
+	}
+	kong.Response.AddHeader("x-roles", string(grantsJson))
 	//
 	kong.Log.Warn(tok)
-	kong.Response.Exit(200, "{}", x)
-	return
+
 }
 
 var parser = jwt.NewParser(jwt.WithoutClaimsValidation())
 
-func handleRoles(token *jwt.Token, url string) ([]string, error) {
+func handleRoles(token *jwt.Token, url string) (*grants.Grants, error) {
 	fmt.Println(token.Claims.(*signing.Claims))
 	if claims, ok := token.Claims.(*signing.Claims); ok {
 		addr := claims.Addr
 
 		addrString := fmt.Sprintf("%v", addr)
-		roles, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
+		grants, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
 		if err != nil {
 			return nil, err
 		}
-		return roles, nil
+		return grants, nil
 	}
 	return nil, fmt.Errorf("malformed claims")
 }
