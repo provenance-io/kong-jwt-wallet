@@ -85,6 +85,7 @@ func handleRoles(token *jwt.Token, url string) ([]string, error) {
 		}
 		return nil, fmt.Errorf("Missing addr claim")
 	}
+	return nil, fmt.Errorf("Malformed claims")
 }
 
 func handleToken(kong *pdk.PDK, tokenString string) (*jwt.Token, error) {
