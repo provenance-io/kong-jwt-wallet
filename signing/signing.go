@@ -1,9 +1,11 @@
 package signing
 
 import (
+	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"math/big"
 	"strings"
 
 	"github.com/Kong/go-pdk"
@@ -54,7 +56,7 @@ type secp256k1Sig struct {
 
 var _ jwt.SigningMethod = (*secp256k1Sig)(nil)
 
-func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) error {
+func (s secp256k1Sig) Verify_deprecated(signingString, signature string, key interface{}) error {
 	fmt.Printf("verify(" + signingString + "," + signature + ")")
 
 	sigBytes, err := base64.RawURLEncoding.DecodeString(signature)
@@ -73,6 +75,34 @@ func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) e
 	if !ok {
 		return fmt.Errorf("sig verify failed")
 	}
+	return nil
+}
+
+func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) error {
+	pub, ok := key.(*secp256k1.PublicKey)
+	if !ok {
+		fmt.Println("Wrong fromat")
+		return fmt.Errorf("wrong key format")
+	}
+
+	hasher := sha256.New()
+	hasher.Write([]byte(signingString))
+
+	sig, err := jwt.DecodeSegment(signature)
+	if err != nil {
+		return err
+	}
+	if len(sig) != 64 {
+		return fmt.Errorf("bad signature")
+	}
+
+	bir := new(big.Int).SetBytes(sig[:32])   // R
+	bis := new(big.Int).SetBytes(sig[32:64]) // S
+
+	if !ecdsa.Verify(pub.ToECDSA(), hasher.Sum(nil), bir, bis) {
+		return fmt.Errorf("could not verify")
+	}
+
 	return nil
 }
 
