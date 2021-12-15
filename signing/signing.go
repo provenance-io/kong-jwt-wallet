@@ -83,7 +83,11 @@ func (s secp256k1Sig) Sign(signingString string, key interface{}) (string, error
 	if err != nil {
 		return "", err
 	}
-	return base64.RawURLEncoding.EncodeToString(sig.Serialize()), nil
+
+    siggy := make([]byte, 0)
+	siggy = append(siggy, sig.R.Bytes()...)
+	siggy = append(siggy, sig.S.Bytes()...)
+	return base64.RawURLEncoding.EncodeToString(siggy), nil
 }
 
 func (s secp256k1Sig) Alg() string {
