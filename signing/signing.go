@@ -10,7 +10,6 @@ import (
 
 	"github.com/Kong/go-pdk"
 	secp256k1 "github.com/btcsuite/btcd/btcec"
-	ecrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -117,24 +116,6 @@ func (s secp256k1Sig) Sign(signingString string, key interface{}) (string, error
 
 	out := toES256K(sig.Serialize())
 	return base64.RawURLEncoding.EncodeToString(out), nil
-}
-
-func (s secp256k1Sig) Sign_ignore(signingString string, key interface{}) (string, error) {
-	prv, ok := key.(*ecdsa.PrivateKey)
-	if !ok {
-		return "", fmt.Errorf("wrong key format")
-	}
-
-	hasher := sha256.New()
-	hasher.Write([]byte(signingString))
-
-	sig, err := ecrypto.Sign(hasher.Sum(nil), prv)
-	if err != nil {
-		return "", err
-	}
-
-	out := toES256K(sig)
-	return jwt.EncodeSegment(out), nil
 }
 
 func (s secp256k1Sig) Alg() string {
