@@ -1,13 +1,16 @@
 package signing
 
 import (
+	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"math/big"
 	"strings"
 
 	"github.com/Kong/go-pdk"
 	secp256k1 "github.com/btcsuite/btcd/btcec"
+	ecrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -54,7 +57,7 @@ type secp256k1Sig struct {
 
 var _ jwt.SigningMethod = (*secp256k1Sig)(nil)
 
-func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) error {
+func (s secp256k1Sig) Verify_deprecated(signingString, signature string, key interface{}) error {
 	fmt.Printf("verify(" + signingString + "," + signature + ")")
 
 	sigBytes, err := base64.RawURLEncoding.DecodeString(signature)
@@ -76,6 +79,34 @@ func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) e
 	return nil
 }
 
+func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) error {
+	pub, ok := key.(*ecdsa.PublicKey)
+	if !ok {
+		fmt.Println("Wrong fromat")
+		return fmt.Errorf("wrong key format")
+	}
+
+	hasher := sha256.New()
+	hasher.Write([]byte(signingString))
+
+	sig, err := jwt.DecodeSegment(signature)
+	if err != nil {
+		return err
+	}
+	if len(sig) != 64 {
+		return fmt.Errorf("bad signature")
+	}
+
+	bir := new(big.Int).SetBytes(sig[:32])   // R
+	bis := new(big.Int).SetBytes(sig[32:64]) // S
+
+	if !ecdsa.Verify(pub, hasher.Sum(nil), bir, bis) {
+		return fmt.Errorf("could not verify")
+	}
+
+	return nil
+}
+
 func (s secp256k1Sig) Sign(signingString string, key interface{}) (string, error) {
 	hasher := sha256.New()
 	hasher.Write([]byte(signingString))
@@ -83,11 +114,35 @@ func (s secp256k1Sig) Sign(signingString string, key interface{}) (string, error
 	if err != nil {
 		return "", err
 	}
-	return base64.RawURLEncoding.EncodeToString(sig.Serialize()), nil
+
+	out := toES256K(sig.Serialize())
+	return base64.RawURLEncoding.EncodeToString(out), nil
+}
+
+func (s secp256k1Sig) Sign_ignore(signingString string, key interface{}) (string, error) {
+	prv, ok := key.(*ecdsa.PrivateKey)
+	if !ok {
+		return "", fmt.Errorf("wrong key format")
+	}
+
+	hasher := sha256.New()
+	hasher.Write([]byte(signingString))
+
+	sig, err := ecrypto.Sign(hasher.Sum(nil), prv)
+	if err != nil {
+		return "", err
+	}
+
+	out := toES256K(sig)
+	return jwt.EncodeSegment(out), nil
 }
 
 func (s secp256k1Sig) Alg() string {
 	return "ES256K"
+}
+
+func toES256K(sig []byte) []byte {
+	return sig[:64]
 }
 
 func NewSecp256k1Signer() jwt.SigningMethod {
