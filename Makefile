@@ -1,10 +1,13 @@
 all: lib bin
 
-lib: jwt-wallet.go plugin/main.go
-	go build -o jwt-wallet.so -buildmode plugin jwt-wallet.go
+lib: jwt-wallet.go
+	go build -o jwt-wallet.so -buildmode plugin ./jwt-wallet.go
 
-bin: jwt-wallet.go cmd/jwt_wallet/main.go
-	go build -o jwt-wallet ./cmd/jwt_wallet/main.go
+bin: jwt-wallet.go main.go
+	go build -o jwt-wallet ./main.go ./jwt-wallet.go
+
+lint:
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs gofmt -w -d -s
 
 docker:
 	docker build -t kong-test .
