@@ -79,7 +79,7 @@ func (s secp256k1Sig) Verify_deprecated(signingString, signature string, key int
 }
 
 func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) error {
-	pub, ok := key.(*ecdsa.PublicKey)
+	pub, ok := key.(*secp256k1.PublicKey)
 	if !ok {
 		fmt.Println("Wrong fromat")
 		return fmt.Errorf("wrong key format")
@@ -99,7 +99,7 @@ func (s secp256k1Sig) Verify(signingString, signature string, key interface{}) e
 	bir := new(big.Int).SetBytes(sig[:32])   // R
 	bis := new(big.Int).SetBytes(sig[32:64]) // S
 
-	if !ecdsa.Verify(pub, hasher.Sum(nil), bir, bis) {
+	if !ecdsa.Verify(pub.ToECDSA(), hasher.Sum(nil), bir, bis) {
 		return fmt.Errorf("could not verify")
 	}
 
