@@ -1,1 +1,4 @@
 jwt-wallet.so
+.idea/
+jwt-wallet
+*.swp
