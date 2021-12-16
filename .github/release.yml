@@ -1,4 +1,4 @@
-name: Provenance Binary Release
+name: kong-wallet-jwt Binary Release
 
 on:
   push:
