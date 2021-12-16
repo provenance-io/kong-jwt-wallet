@@ -1,22 +1,65 @@
-# kong-go-plugin-sample
+# kong-wallet-jwt
 
-It adds an extra layer for security between consumers and producers. Consumers send a consumer-key in a query string and in this way we are able to identify the consumers. Without this parameter or wrong parameter won't be worked and they will get an error message regarding that.
+Adds an extra layer of security and functions as a role authority. This plugin takes in an `Authorization` header with a user signed JWT token.  With a verified JWT this plugin can also function as a role authority and provide `x-roles` that belong to the associated account that signed the JWT. 
 
-We define the key for a specific consumer and it has to send this key as a query string. After that we are matching the key in query-string and pre-defined key in configuration file.
+## Getting started
+
+When using this plugin you can use `go install github.com/provenance-io/kong-jwt-wallet/cmd/jwt-wallet@v0.3.0` directly or download a release version (soon to come)
+
+### Configuration
+
+When using the plugin, add it to your kong service definition and include an rbac url of choice. Currently the rbac url should contain an `{addr}` string target. 
+```
+  plugins:
+  - name: jwt-wallet
+    config:
+      rbac: http://localhost:8888/{addr}/
+```
+
+### Running locally
 
 ```
-docker build -t kong-demo .
+make docker && make docker-run
 ```
 
-Images are built and we can run them as containers.
+## Creating a JWT
+
+This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes (base64). If wanting grants to return then also include the wallet address as the `addr` field. 
+
+### Header: 
 
 ```
-docker run -ti --rm --name kong-go-plugins \
-  -e "KONG_DATABASE=off" \
-  -e "KONG_GO_PLUGINS_DIR=/tmp/go-plugins" \
-  -e "KONG_DECLARATIVE_CONFIG=/tmp/config.yml" \
-  -e "KONG_PLUGINS=key-checker" \
-  -e "KONG_PROXY_LISTEN=0.0.0.0:8000" \
-  -p 8000:8000 \
-  kong-demo
+{
+  "alg": "ES256K",
+  "typ": "JWT"
+}
 ```
+
+### Payload: 
+
+```
+{
+  "addr": wallet_address,
+  "sub": wallet_public_key,
+  "iss": your_org,
+  "iat": 1609459200,
+  "exp": 4070908800
+}
+```
+
+### Signature: 
+
+```
+ecdsa.Sign(
+  SHA256(base64UrlEncode(header) + "." +
+  base64UrlEncode(payload)))
+```
+
+Full token representation: 
+
+```
+base64UrlEncode(header) + "." +
+  base64UrlEncode(payload) + "." +
+    base64UrlEncode(signature)
+```
+
