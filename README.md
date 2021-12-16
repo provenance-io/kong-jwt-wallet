@@ -24,8 +24,7 @@ make docker && make docker-run
 
 ## Creating a JWT
 
-This plugin assumes the standard jwt format but requires to be signed wtih an `secp256k1` elliptic curve key. The jwt must set the `alg` type to `ES256K` to be recognized in this plugin. 
-When generating your jwt you must set the public key as the `sub` field on the payload and if wanting grants to return then also include the wallet address as the `addr` field. 
+This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes (base64). If wanting grants to return then also include the wallet address as the `addr` field. 
 
 ### Header: 
 
