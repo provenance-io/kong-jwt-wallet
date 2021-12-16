@@ -1,4 +1,4 @@
-module github.com/provenance-io/jwt-wallet
+module github.com/provenance-io/kong-jwt-wallet
 
 go 1.17
 
