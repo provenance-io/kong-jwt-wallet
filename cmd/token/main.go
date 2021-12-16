@@ -6,7 +6,7 @@ import (
 	"fmt"
 	secp256k1 "github.com/btcsuite/btcd/btcec"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/provenance-io/jwt-wallet/signing"
+	"github.com/provenance-io/kong-jwt-wallet/signing"
 	"time"
 )
 
