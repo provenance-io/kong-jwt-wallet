@@ -8,5 +8,4 @@ services:
   plugins:
   - name: jwt-wallet
     config:
-#      rbac: http://localhost:8888/api/v1/rbac/account/
-      rbac: http://localhost:8888/index.html
+      rbac: http://localhost:8888/api/v1/rbac/account/{addr}/grants
