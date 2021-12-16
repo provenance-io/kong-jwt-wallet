@@ -53,4 +53,3 @@ func main() {
 	fmt.Printf("sig:%s\n", newToken.Signature)
 	fmt.Printf("valid:%+v\n", newToken)
 }
-
