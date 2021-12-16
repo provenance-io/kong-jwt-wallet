@@ -22,6 +22,7 @@ docker:
 .PHONY: docker-run
 docker-run:
 	docker run --net host -it --name kong-test --rm \
+		-v $(CURDIR)/config.yml:/opt/config.yml \
 		-e "KONG_DATABASE=off" \
 		-e "KONG_LOG_LEVEL=debug" \
 		-e "KONG_PROXY_LISTEN=0.0.0.0:8000" \
@@ -37,7 +38,7 @@ docker-bash:
 		-e "KONG_PROXY_LISTEN=0.0.0.0:8000" \
 		-e "KONG_DECLARATIVE_CONFIG=/opt/config.yml" \
 		-p 9000:8000 \
-		kong-test:latest
+		kong-test:latest bash
 
 .PHONY: curl
 curl:

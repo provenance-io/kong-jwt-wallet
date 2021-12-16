@@ -1,4 +1,6 @@
 jwt-wallet.so
 .idea/
 jwt-wallet
+# Unignore subdir jwt things
+!*/jwt-wallet
 *.swp
