@@ -5,7 +5,7 @@ all: bin
 
 .PHONY: bin
 bin:
-	go build -o jwt-wallet
+	go build -o jwt-wallet ./cmd/jwt-wallet
 
 .PHONY: lint
 lint:
@@ -43,6 +43,10 @@ docker-bash:
 curl:
 	# We only care about headers getting created
 	curl -q -sSL -v -Hauthorization:$(shell cat ./token) localhost:8000/ >/dev/null
+
+.PHONY: token
+token:
+	go run ./cmd/token/main.go
 
 .PHONY: clean
 clean:

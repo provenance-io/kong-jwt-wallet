@@ -114,7 +114,7 @@ func (s secp256k1Sig) Sign(signingString string, key interface{}) (string, error
 		return "", err
 	}
 
-    siggy := make([]byte, 0)
+	siggy := make([]byte, 0)
 	siggy = append(siggy, sig.R.Bytes()...)
 	siggy = append(siggy, sig.S.Bytes()...)
 	return base64.RawURLEncoding.EncodeToString(siggy), nil

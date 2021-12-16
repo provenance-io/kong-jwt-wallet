@@ -4,7 +4,7 @@ ADD . /app/
 WORKDIR /app
 # Once the repo made pubilc, this can become:
 ## go install github.com/provenance-io/kong-jwt-wallet/cmd/jwt-wallet@latest
-RUN go build -o jwt-wallet
+RUN go build -o jwt-wallet ./cmd/jwt-wallet
 
 FROM kong:2.4.1-alpine
 # Once the repo made public, this can become:
