@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type RoleResponse struct {
@@ -35,18 +36,17 @@ type Org struct {
 	AuthzGrants []string `json:"authzGrants"`
 }
 
-func GetGrants(grantsUrl string, address string) (*Grants, error) {
+func GetGrants(grantsURL string, address string) (*Grants, error) {
 	client := &http.Client{}
 
-	roleReq, _ := http.NewRequest("GET", grantsUrl, nil)
+	uri := strings.ReplaceAll(grantsURL, "{addr}", address)
+	roleReq, _ := http.NewRequest("GET", uri, nil)
 	roleReq.Header.Add("x-sender", address)
 
 	resp, err := client.Do(roleReq)
-
 	if err != nil {
 		return nil, err
 	}
-
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
