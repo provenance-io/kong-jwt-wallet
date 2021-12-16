@@ -20,25 +20,19 @@ docker-run:
 	docker run --net host -it --name kong-test --rm \
 		-e "KONG_DATABASE=off" \
 		-e "KONG_LOG_LEVEL=debug" \
-		-e "KONG_PLUGINSERVER_NAMES=jwt-wallet" \
-		-e "KONG_PLUGINSERVER_JWT_WALLET_START_CMD=/usr/local/bin/jwt-wallet" \
-		-e "KONG_PLUGINSERVER_JWT_WALLET_QUERY_CMD=/usr/local/bin/jwt-wallet -dump" \
-		-e "KONG_PLUGINS=bundled,jwt-wallet" \
 		-e "KONG_PROXY_LISTEN=0.0.0.0:8000" \
+		-e "KONG_DECLARATIVE_CONFIG=/opt/config.yml" \
 		-p 9000:8000 \
-		kong:latest
+		kong-test:latest
 
 docker-bash:
 	docker run --net host -it --name kong-test --rm \
 		-e "KONG_DATABASE=off" \
 		-e "KONG_LOG_LEVEL=debug" \
-		-e "KONG_PLUGINSERVER_NAMES=jwt-wallet" \
-		-e "KONG_PLUGINSERVER_JWT_WALLET_START_CMD=/usr/local/bin/jwt-wallet" \
-		-e "KONG_PLUGINSERVER_JWT_WALLET_QUERY_CMD=/usr/local/bin/jwt-wallet -dump" \
-		-e "KONG_PLUGINS=bundled,jwt-wallet" \
 		-e "KONG_PROXY_LISTEN=0.0.0.0:8000" \
+		-e "KONG_DECLARATIVE_CONFIG=/opt/config.yml" \
 		-p 9000:8000 \
-		kong:latest
+		kong-test:latest
 
 
 clean:
