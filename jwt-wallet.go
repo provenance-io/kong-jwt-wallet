@@ -79,10 +79,7 @@ var parser = jwt.NewParser(jwt.WithoutClaimsValidation())
 func handleRoles(token *jwt.Token, url string) (*grants.Grants, error) {
 	fmt.Println(token.Claims.(*signing.Claims))
 	if claims, ok := token.Claims.(*signing.Claims); ok {
-		addr := claims.Addr
-
-		addrString := fmt.Sprintf("%v", addr)
-		grants, err := grants.GetGrants(url+addrString+"/grants", addrString) // temporary interpolation until better configuration solutions
+		grants, err := grants.GetGrants(url, claims.Addr) // temporary interpolation until better configuration solutions
 		if err != nil {
 			return nil, err
 		}
