@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Kong/go-pdk/server"
+
 	jwtwallet "github.com/provenance-io/kong-jwt-wallet"
 )
 

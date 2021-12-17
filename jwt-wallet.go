@@ -3,6 +3,7 @@ package jwtwallet
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/provenance-io/kong-jwt-wallet/grants"
 	"github.com/provenance-io/kong-jwt-wallet/signing"
 
@@ -11,7 +12,7 @@ import (
 )
 
 type Config struct {
-	RBAC string `json:"rbac"`
+	RBAC   string `json:"rbac"`
 	APIKey string `json:"apikey"`
 }
 
