@@ -1,8 +1,5 @@
 all: bin
 
-# lib: jwt-wallet.go
-# 	go build -o jwt-wallet.so -buildmode plugin ./jwt-wallet.go
-
 .PHONY: bin
 bin:
 	go build -o jwt-wallet ./cmd/jwt-wallet

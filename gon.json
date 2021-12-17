@@ -1,5 +1,5 @@
 {
-	"source": ["./build/bin/jwt-wallet"],
+	"source": ["./jwt-wallet"],
 	"bundle_id": "io.provenance",
 	"apple_id": {
 		"password": "@env:AC_PASSWORD"
@@ -8,6 +8,6 @@
 		"application_identity": "Developer ID Application: FIGURE TECHNOLOGIES INC."
 	},
 	"zip": {
-		"output_path": "./build/jwt-wallet-darwin-amd64.zip"
+		"output_path": "./jwt-wallet-darwin-amd64.zip"
 	}
 }
