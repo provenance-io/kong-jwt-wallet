@@ -39,7 +39,7 @@ jobs:
           p12-password: ${{ secrets.CODESIGNING_P12_PASSWORD }}
       - name: Build osx binary
         run: |
-          make bin
+          make release
       - name: Sign the mac binaries with Gon
         env:
           AC_USERNAME: ${{ secrets.AC_USERNAME }}
@@ -65,7 +65,7 @@ jobs:
           go-version: ${{ needs.build_init.outputs.go_version }}
       - name: Build linux binary
         run: |
-          make bin
+          make release
       - uses: actions/upload-artifact@v2
         with:
           name: linux-zip
