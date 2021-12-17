@@ -1,8 +1,15 @@
+BUILDDIR ?= $(CURDIR)/build
+
 all: bin
 
 .PHONY: bin
 bin:
 	go build -o jwt-wallet ./cmd/jwt-wallet
+
+.PHONY: release
+release:
+	go build -o ${BUILDDIR}/jwt-wallet ./cmd/jwt-wallet
+
 
 .PHONY: lint
 lint:

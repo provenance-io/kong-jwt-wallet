@@ -49,7 +49,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: osx-zip
-          path: *.zip
+          path: release/*.zip
 
   build_linux:
     runs-on: ubuntu-latest
@@ -69,7 +69,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: linux-zip
-          path: *.zip
+          path: release/*.zip
 
   create_release:
     runs-on: ubuntu-latest
@@ -115,11 +115,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: linux-zip
+          path: release/
       -
         name: Download osx zip artifact
         uses: actions/download-artifact@v2
         with:
           name: osx-zip
+          path: release/
       -
         name: Upload osx zip artifact
         uses: actions/upload-release-asset@v1
@@ -127,7 +129,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.release_url }}
-          asset_path: ./jwt-wallet-darwin-amd64-${{ needs.build_init.outputs.version }}.zip
+          asset_path: ./release/jwt-wallet-darwin-amd64-${{ needs.build_init.outputs.version }}.zip
           asset_name: jwt-wallet-darwin-amd64-${{ needs.build_init.outputs.version }}.zip
           asset_content_type: application/octet-stream
       -
@@ -137,6 +139,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.release_url }}
-          asset_path: ./jwt-wallet-linux-amd64-${{ needs.build_init.outputs.version }}.zip
+          asset_path: ./release/jwt-wallet-linux-amd64-${{ needs.build_init.outputs.version }}.zip
           asset_name: jwt-wallet-linux-amd64-${{ needs.build_init.outputs.version }}.zip
           asset_content_type: application/octet-stream

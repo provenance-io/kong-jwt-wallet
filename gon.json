@@ -8,6 +8,6 @@
 		"application_identity": "Developer ID Application: FIGURE TECHNOLOGIES INC."
 	},
 	"zip": {
-		"output_path": "./jwt-wallet-darwin-amd64.zip"
+		"output_path": "./release/jwt-wallet-darwin-amd64.zip"
 	}
 }
