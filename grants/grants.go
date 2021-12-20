@@ -45,6 +45,7 @@ type HTTPClient interface {
 }
 
 func GetGrants(grantsURL string, address string) (*Grants, error) {
+	Client = &http.Client{}
 	uri := strings.ReplaceAll(grantsURL, "{addr}", address)
 	roleReq, _ := http.NewRequest("GET", uri, nil)
 	roleReq.Header.Add("x-sender", address)
