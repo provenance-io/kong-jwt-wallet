@@ -7,10 +7,33 @@ import (
 	secp256k1 "github.com/btcsuite/btcd/btcec"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/provenance-io/kong-jwt-wallet/signing"
+	"os"
 	"time"
 )
 
 func main() {
+	if len(os.Args) > 1 {
+		parseToken()
+	} else {
+		mkToken()
+	}
+}
+
+
+func parseToken() {
+	tokenStr := os.Args[1]
+	claims := signing.Claims{}
+	token, err := jwt.ParseWithClaims(tokenStr, &claims, signing.ParseKey(nil))
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("token:%+v\n", token)
+	fmt.Printf("claims:%v\n", claims)
+	fmt.Printf("valid:%v\n", token.Valid)
+}
+
+func mkToken() {
 	pkBytes, err := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
 	if err != nil {
 		panic(err)
