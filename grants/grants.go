@@ -48,11 +48,14 @@ func init() {
 	Client = &http.Client{}
 }
 
-func GetGrants(grantsURL string, address string) (*Grants, error) {
+func GetGrants(grantsURL string, address string, apiKey string) (*Grants, error) {
 	uri := strings.ReplaceAll(grantsURL, "{addr}", address)
 	roleReq, _ := http.NewRequest("GET", uri, nil)
 	roleReq.Header.Add("x-sender", address)
-
+	// Add apikey if supplied.
+	if apiKey != "" {
+		roleReq.Header.Add("apikey", apiKey)
+	}
 	resp, err := Client.Do(roleReq)
 	if err != nil {
 		return nil, err
@@ -68,10 +71,6 @@ func GetGrants(grantsURL string, address string) (*Grants, error) {
 	if err := json.Unmarshal(body, &roleResponse); err != nil {
 		fmt.Println("Can not unmarshal JSON")
 		return nil, err
-	}
-
-	if len(roleResponse.Grants) == 0 {
-		return nil, fmt.Errorf("account doesn't exist in role service")
 	}
 
 	var grants Grants

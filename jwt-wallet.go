@@ -12,7 +12,8 @@ import (
 )
 
 type Config struct {
-	RBAC string `json:"rbac"`
+	RBAC   string `json:"rbac"`
+	APIKey string `json:"apikey"`
 }
 
 func New() interface{} {
@@ -51,7 +52,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 
-	grants, err := handleRoles(tok, conf.RBAC)
+	grants, err := handleRoles(tok, conf.RBAC, conf.APIKey)
 	if err != nil {
 		kong.Log.Warn("err: " + err.Error())
 		kong.Response.Exit(400, "account does not exist", x)
@@ -71,12 +72,19 @@ func (conf Config) Access(kong *pdk.PDK) {
 
 var parser = jwt.NewParser(jwt.WithoutClaimsValidation())
 
+<<<<<<< HEAD
 func handleRoles(token *jwt.Token, url string) (*grants.Grants, error) {
 	if claims, ok := token.Claims.(*signing.Claims); ok {
 		if claims.Addr == "" {
 			return nil, fmt.Errorf("missing addr claim")
 		}
 		grants, err := grants.GetGrants(url, claims.Addr) // temporary interpolation until better configuration solutions
+=======
+func handleRoles(token *jwt.Token, url string, apiKey string) (*grants.Grants, error) {
+	fmt.Println(token.Claims.(*signing.Claims))
+	if claims, ok := token.Claims.(*signing.Claims); ok {
+		grants, err := grants.GetGrants(url, claims.Addr, apiKey) // temporary interpolation until better configuration solutions
+>>>>>>> main
 		if err != nil {
 			return nil, err
 		}
