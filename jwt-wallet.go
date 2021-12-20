@@ -3,6 +3,7 @@ package jwtwallet
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/provenance-io/kong-jwt-wallet/grants"
 	"github.com/provenance-io/kong-jwt-wallet/signing"
 
@@ -62,7 +63,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 		kong.Response.Exit(500, "someting went wrong", x)
 		return
 	}
-	kong.Response.AddHeader("x-roles", string(grantsJson))
+	kong.ServiceRequest.AddHeader("x-roles", string(grantsJson))
 	//
 	kong.Log.Warn(tok)
 
