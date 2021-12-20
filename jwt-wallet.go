@@ -64,7 +64,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 	kong.ServiceRequest.AddHeader("x-roles", string(grantsJson))
-	//
+
 	kong.Log.Warn(tok)
 
 }
