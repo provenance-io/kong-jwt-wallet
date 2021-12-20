@@ -72,7 +72,6 @@ func (conf Config) Access(kong *pdk.PDK) {
 var parser = jwt.NewParser(jwt.WithoutClaimsValidation())
 
 func handleRoles(token *jwt.Token, url string) (*grants.Grants, error) {
-	fmt.Println(token.Claims.(*signing.Claims))
 	if claims, ok := token.Claims.(*signing.Claims); ok {
 		if claims.Addr == "" {
 			return nil, fmt.Errorf("missing addr claim")

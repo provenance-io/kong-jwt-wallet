@@ -44,8 +44,11 @@ type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-func GetGrants(grantsURL string, address string) (*Grants, error) {
+func init() {
 	Client = &http.Client{}
+}
+
+func GetGrants(grantsURL string, address string) (*Grants, error) {
 	uri := strings.ReplaceAll(grantsURL, "{addr}", address)
 	roleReq, _ := http.NewRequest("GET", uri, nil)
 	roleReq.Header.Add("x-sender", address)
