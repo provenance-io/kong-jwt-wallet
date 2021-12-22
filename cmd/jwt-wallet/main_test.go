@@ -75,7 +75,7 @@ func TestMissingAddrClaim(t *testing.T) {
 	env, err := test.New(t, test.Request{
 		Method:  "GET",
 		Url:     "http://example.com",
-		Headers: map[string][]string{"Authorization": {sig}},
+		Headers: map[string][]string{"Authorization": {"Bearer " + sig}},
 	})
 	assert.NoError(t, err)
 
@@ -95,7 +95,7 @@ func TestMissingSubClaim(t *testing.T) {
 	env, err := test.New(t, test.Request{
 		Method:  "GET",
 		Url:     "http://example.com",
-		Headers: map[string][]string{"Authorization": {sig}},
+		Headers: map[string][]string{"Authorization": {"Bearer " + sig}},
 	})
 	assert.NoError(t, err)
 
@@ -123,7 +123,7 @@ func TestValidJwt(t *testing.T) {
 	env, err := test.New(t, test.Request{
 		Method:  "GET",
 		Url:     "http://example.com",
-		Headers: map[string][]string{"Authorization": {sig}},
+		Headers: map[string][]string{"Authorization": {"Bearer " + sig}},
 	})
 	assert.NoError(t, err)
 

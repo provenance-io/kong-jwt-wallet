@@ -3,6 +3,7 @@ package jwtwallet
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/provenance-io/kong-jwt-wallet/grants"
 	"github.com/provenance-io/kong-jwt-wallet/signing"
@@ -45,7 +46,14 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 
-	tok, err := handleToken(kong, header)
+	authToken := strings.Split(header, "Bearer")
+	if len(authToken) < 2 {
+		kong.Log.Warn("malformed auth header")
+		kong.Response.Exit(401, "{}", x)
+		return
+	}
+
+	tok, err := handleToken(kong, strings.TrimSpace(authToken[1]))
 	if err != nil {
 		kong.Log.Warn("err:" + err.Error())
 		kong.Response.Exit(401, "{}", x)
