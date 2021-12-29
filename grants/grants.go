@@ -36,9 +36,19 @@ type Org struct {
 	AuthzGrants []string `json:"authzGrants"`
 }
 
-func GetGrants(grantsURL, address, apiKey string) (*Grants, error) {
-	client := &http.Client{}
+var (
+	Client HTTPClient
+)
 
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
+func init() {
+	Client = &http.Client{}
+}
+
+func GetGrants(grantsURL string, address string, apiKey string) (*Grants, error) {
 	uri := strings.ReplaceAll(grantsURL, "{addr}", address)
 	roleReq, _ := http.NewRequest("GET", uri, nil)
 	roleReq.Header.Add("x-sender", address)
@@ -46,7 +56,7 @@ func GetGrants(grantsURL, address, apiKey string) (*Grants, error) {
 	if apiKey != "" {
 		roleReq.Header.Add("apikey", apiKey)
 	}
-	resp, err := client.Do(roleReq)
+	resp, err := Client.Do(roleReq)
 	if err != nil {
 		return nil, err
 	}

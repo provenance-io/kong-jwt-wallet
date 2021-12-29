@@ -40,18 +40,9 @@ func main() {
 	sig, err := token.SignedString(prvk)
 	fmt.Printf("signed:%s\n", sig)
 
-	//testToken := "eyJhbGciOiJFUzI1NksiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJwcm92ZW5hbmNlLmlvIiwic3ViIjoiQTQ1SndKcEptX2J1UW5vd2Z6SE9RQk5oYTRpNEQ5cUYyOUZPVnQ3NGlqQ1UiLCJpYXQiOiIxNjM5NjAyNzIwMDAwIiwiZXhwIjoiMTYzOTc4MjcyMDAwMCIsImFkZHIiOiJ0cDFmeWVkZmVnemd3ODhxZHg0MHh6NXBxd2podHQ2Zmo2ZHc2eHBwYSJ9.JCThW-MlX_3nCrketHDEqoGFPf_59nWAOMFMW_38UmlUECc0fLq-bBjHP9z1yrEkkMHpG3Kh_psRpFp2k4mqQA"
-
-	//signing.NewSecp256k1Signer().Verify(signingStringTest, {})
-
 	var newClaims signing.Claims
 	newToken, err := jwt.ParseWithClaims(sig, &newClaims, signing.ParseKey(nil))
 
-	//roles, err := handleRoles(token, "http://localhost:8080/api/v1/rbac/account/")
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//fmt.Printf("\nroles:%s\n", roles)
 	fmt.Printf("sig:%s\n", newToken.Signature)
 	fmt.Printf("valid:%+v\n", newToken)
 }
