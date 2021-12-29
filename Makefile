@@ -1,5 +1,24 @@
 BUILDDIR ?= $(CURDIR)/build
 
+ifeq (,$(VERSION))
+  VERSION := $(shell git describe --exact-match 2>/dev/null)
+  # if VERSION is empty, then populate it with branch's name and raw commit hash
+  ifeq (,$(VERSION))
+    VERSION := $(BRANCH_PRETTY)-$(COMMIT)
+  endif
+endif
+
+UNAME_S = $(shell uname -s | tr '[A-Z]' '[a-z]')
+UNAME_M = $(shell uname -m)
+
+ifeq ($(UNAME_M),x86_64)
+	ARCH=amd64
+endif
+
+RELEASE_ZIP_BASE=provenance-$(UNAME_S)-$(ARCH)
+RELEASE_ZIP_NAME=$(RELEASE_ZIP_BASE)-$(VERSION).zip
+RELEASE_ZIP=$(BUILDDIR)/$(RELEASE_ZIP_NAME)
+
 all: bin
 
 .PHONY: bin
@@ -10,12 +29,17 @@ bin:
 release:
 	go build -o ${BUILDDIR}/jwt-wallet ./cmd/jwt-wallet
 
+linux-release:
+	$(MAKE) release
+	cd $(BUILDDIR) && \
+	  zip $(RELEASE_ZIP_NAME) jwt-wallet && \
+	cd ..
+
 
 .PHONY: lint
 lint:
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs gofmt -w -d -s
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" -not -path "*/statik*" | xargs goimports -w -local github.com/provenance-io/kong-jwt-wallet
-
 
 .PHONY: http
 http:
