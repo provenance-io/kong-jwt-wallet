@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/Kong/go-pdk v0.7.1
+
 	github.com/golang-jwt/jwt/v4 v4.2.0
-	github.com/tendermint/tendermint v0.35.0
 )
 
 require golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
