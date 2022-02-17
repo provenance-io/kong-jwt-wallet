@@ -78,7 +78,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 
 }
 
-var parser = jwt.NewParser(jwt.WithoutClaimsValidation())
+var parser = jwt.NewParser()
 
 func handleRoles(token *jwt.Token, url string, apiKey string) (*grants.Grants, error) {
 	if claims, ok := token.Claims.(*signing.Claims); ok {
