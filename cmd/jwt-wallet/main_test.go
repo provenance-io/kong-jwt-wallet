@@ -133,7 +133,7 @@ func TestValidJwt(t *testing.T) {
 	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, _ := token.SignedString(prvk)
 
-	r := ioutil.NopCloser(bytes.NewReader([]byte(grantsJSONString)))
+	r := ioutil.NopCloser(bytes.NewReader([]byte(subjectJSONString)))
 	GetDoFunc = func(*http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: 200,
@@ -172,27 +172,25 @@ func GenerateClaims(addr string, pubKey *secp256k1.PublicKey) *signing.Claims {
 	}
 }
 
-var grantsJSONString = `
+var subjectJSONString = `
 {
-	"account": {
-		"address": "1337-wallet",
-		"name": "jwt-wallet",
-		"type": "ORGANIZATION"
-	},
+	"address": "1337-wallet",
+	"name": "jwt-wallet",
 	"grants": [
 		{
-			"org": {
-				"address": "1337-wallet",
-				"name": "jwt-wallet",
-				"type": "ORGANIZATION"
-			},
-			"roles": [
-				"1337_role"
-			],
-			"authzGrants": [],
-			"apps": []
+			"address": "1337-wallet",
+			"name": "jwt-wallet",
+			"applications": [
+				{
+					"name": "myapp",
+					"permissions": [
+						"1337_role"
+					],
+					"authzGrants": []
+				}
+			]
 		}
 	]
 }`
 
-var xRoles = `{"orgs":[{"name":"jwt-wallet","roles":["1337_role"],"authzGrants":[]}]}`
+var xRoles = `[{"address":"1337-wallet","name":"jwt-wallet","applications":[{"name":"myapp","permissions":["1337_role"],"authzGrants":[]}]}]`
