@@ -15,12 +15,12 @@ type SubjectResponse struct {
 }
 
 type GrantedAccess struct {
-	Address      string `json:"address"`
-	Name         string `json:"name"`
+	Address      string   `json:"address"`
+	Name         string   `json:"name"`
+	AuthzGrants  []string `json:"authzGrants"`
 	Applications []struct {
 		Name        string   `json:"name"`
 		Permissions []string `json:"permissions"`
-		AuthzGrants []string `json:"authzGrants"`
 	} `json:"applications"`
 }
 

@@ -180,17 +180,17 @@ var subjectJSONString = `
 		{
 			"address": "1337-wallet",
 			"name": "jwt-wallet",
+			"authzGrants": [],
 			"applications": [
 				{
 					"name": "myapp",
 					"permissions": [
 						"1337_role"
-					],
-					"authzGrants": []
+					]
 				}
 			]
 		}
 	]
 }`
 
-var xRoles = `[{"address":"1337-wallet","name":"jwt-wallet","applications":[{"name":"myapp","permissions":["1337_role"],"authzGrants":[]}]}]`
+var xRoles = `[{"address":"1337-wallet","name":"jwt-wallet","authzGrants":[],"applications":[{"name":"myapp","permissions":["1337_role"]}]}]`
