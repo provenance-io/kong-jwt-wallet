@@ -18,9 +18,19 @@ When using the plugin, add it to your kong service definition and include an rba
 
 ### Running locally
 
+Run via docker:
 ```
 make docker && make docker-run
 ```
+
+Use `config.yml` to update the settings for your local running environment.
+Point the `rbac` url to a running copy of RBAC Service or serve the included example payload from the `http/` directory by running: 
+```
+make http
+```
+
+When using the example payload, use the value from `/token` as the JWT/Bearer token for your request.
+
 
 ## Creating a JWT
 
