@@ -1,6 +1,6 @@
 # kong-wallet-jwt
 
-Adds an extra layer of security and functions as a role authority. This plugin takes in an `Authorization` header with a user signed JWT token.  With a verified JWT this plugin can also function as a role authority and provide `x-roles` that belong to the associated account that signed the JWT. 
+Adds an extra layer of security and functions as a role authority. This plugin takes in an `Authorization` header with a user signed JWT token.  With a verified JWT this plugin can also function as a role authority and provide `x-wallet-access` that belong to the associated account that signed the JWT. 
 
 ## Getting started
 

@@ -72,7 +72,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 		kong.Response.Exit(500, "something went wrong", x)
 		return
 	}
-	kong.ServiceRequest.AddHeader("x-roles", string(accessJson))
+	kong.ServiceRequest.AddHeader("x-wallet-access", string(accessJson))
 
 	kong.Log.Warn(tok)
 

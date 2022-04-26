@@ -151,8 +151,8 @@ func TestValidJwt(t *testing.T) {
 	env.DoHttp(config)
 
 	assert.Equal(t, 200, env.ClientRes.Status)
-	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-roles"))
-	assert.Equal(t, xRoles, env.ServiceReq.Headers.Get("x-roles"))
+	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
+	assert.Equal(t, xRoles, env.ServiceReq.Headers.Get("x-wallet-accessz"))
 }
 
 func GenerateClaims(addr string, pubKey *secp256k1.PublicKey) *signing.Claims {
