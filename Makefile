@@ -51,7 +51,7 @@ docker:
 
 .PHONY: docker-run
 docker-run:
-	docker run --net host -it --name kong-test --rm \
+	docker run -it --name kong-test --rm \
 		-v $(CURDIR)/config.yml:/opt/config.yml \
 		-e "KONG_DATABASE=off" \
 		-e "KONG_LOG_LEVEL=debug" \
@@ -62,7 +62,7 @@ docker-run:
 
 .PHONY: docker-bash
 docker-bash:
-	docker run --net host -it --name kong-test --rm \
+	docker run -it --name kong-test --rm \
 		-e "KONG_DATABASE=off" \
 		-e "KONG_LOG_LEVEL=debug" \
 		-e "KONG_PROXY_LISTEN=0.0.0.0:8000" \
