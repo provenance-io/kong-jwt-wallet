@@ -8,5 +8,6 @@ services:
   plugins:
   - name: jwt-wallet
     config:
-#      rbac: http://localhost:8888/api/v1/rbac/account/{addr}/grants
-      rbac: http://localhost:8888/{addr}/index.html
+#      rbac: http://localhost:8888/api/v1/rbac/account/{addr}/grants    # Running RBAC Service
+#      rbac: http://docker.for.mac.host.internal:8888/{addr}/index.html # Use when running `make http` on Mac
+      rbac: http://localhost:8888/{addr}/index.html                     # Use when running `make http` on Linux

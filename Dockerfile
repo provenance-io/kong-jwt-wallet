@@ -6,7 +6,7 @@ WORKDIR /app
 ## go install github.com/provenance-io/kong-jwt-wallet/cmd/jwt-wallet@latest
 RUN go build -o jwt-wallet ./cmd/jwt-wallet
 
-FROM kong:2.4.1-alpine
+FROM kong:2.7.0-alpine
 # Once the repo made public, this can become:
 ## COPY --from=build /go/bin/jwt-wallet /usr/local/bin/
 COPY --from=build /app/jwt-wallet /usr/local/bin/
