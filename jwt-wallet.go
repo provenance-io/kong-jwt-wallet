@@ -85,11 +85,11 @@ func handleGrantedAccess(token *jwt.Token, url string, apiKey string) (*[]grants
 		if claims.Addr == "" {
 			return nil, fmt.Errorf("missing addr claim")
 		}
-		grants, err := grants.GetGrants(url, claims.Addr, apiKey) // temporary interpolation until better configuration solutions
+		grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
 		if err != nil {
 			return nil, err
 		}
-		return grants, nil
+		return grantedAccess, nil
 	}
 	return nil, fmt.Errorf("malformed claims")
 }

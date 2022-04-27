@@ -38,13 +38,13 @@ func init() {
 
 func GetGrants(grantsURL string, address string, apiKey string) (*[]GrantedAccess, error) {
 	uri := strings.ReplaceAll(grantsURL, "{addr}", address)
-	roleReq, _ := http.NewRequest("GET", uri, nil)
-	roleReq.Header.Add("x-sender", address)
+	request, _ := http.NewRequest("GET", uri, nil)
+	request.Header.Add("x-sender", address)
 	// Add apikey if supplied.
 	if apiKey != "" {
-		roleReq.Header.Add("apikey", apiKey)
+		request.Header.Add("apikey", apiKey)
 	}
-	resp, err := Client.Do(roleReq)
+	resp, err := Client.Do(request)
 	if err != nil {
 		return nil, err
 	}
