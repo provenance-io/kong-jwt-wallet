@@ -1,34 +1,30 @@
 {
-	"account": {
-		"address": "tp1uz5g72pvfrdnm9qnjpyvsnwc64d4wygyqanx2t",
-		"name": "jwt-wallet",
-		"type": "ORGANIZATION"
-	},
+	"address": "tp1uz5g72pvfrdnm9qnjpyvsnwc64d4wygyqanx2t",
+	"name": "jwt-wallet"
 	"grants": [
 		{
-			"org": {
-				"address": "tp1uz5g72pvfrdnm9qnjpyvsnwc64d4wygyqanx2t",
-				"name": "jwt-wallet",
-				"type": "ORGANIZATION"
-			},
-			"roles": [
-				"role_read_org",
-				"role_read_account",
-				"role_read_account_grants",
-				"role_write_account",
-				"role_create_app",
-				"role_read_app",
-				"role_delete_app",
-				"role_create_org_role",
-				"role_read_org_role",
-				"role_delete_org_role",
-				"role_create_group",
-				"role_read_group",
-				"role_delete_group",
-				"role_write_group"
-			],
+			"address": "tp1uz5g72pvfrdnm9qnjpyvsnwc64d4wygyqanx2t",
+			"name": "jwt-wallet",
 			"authzGrants": [],
-			"apps": []
+			"applications": [
+				{
+					"name": "my_app",
+					"permissions": [
+						"create_subject",
+						"read_subject",
+						"update_subject",
+						"delete_subject",
+						"create_permission",
+						"read_permission",
+						"update_permission",
+						"delete_permission",
+						"create_role",
+						"read_role",
+						"update_role",
+						"delete_role"
+					]
+				}
+			]
 		}
 	]
 }

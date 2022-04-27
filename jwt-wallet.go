@@ -60,19 +60,19 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 
-	grants, err := handleRoles(tok, conf.RBAC, conf.APIKey)
+	access, err := handleGrantedAccess(tok, conf.RBAC, conf.APIKey)
 	if err != nil {
 		kong.Log.Warn("err: " + err.Error())
 		kong.Response.Exit(400, "account does not exist", x)
 		return
 	}
 
-	grantsJson, err := json.Marshal(grants)
+	accessJson, err := json.Marshal(access)
 	if err != nil {
-		kong.Response.Exit(500, "someting went wrong", x)
+		kong.Response.Exit(500, "something went wrong", x)
 		return
 	}
-	kong.ServiceRequest.AddHeader("x-roles", string(grantsJson))
+	kong.ServiceRequest.AddHeader("x-wallet-access", string(accessJson))
 
 	kong.Log.Warn(tok)
 
@@ -80,16 +80,16 @@ func (conf Config) Access(kong *pdk.PDK) {
 
 var parser = jwt.NewParser()
 
-func handleRoles(token *jwt.Token, url string, apiKey string) (*grants.Grants, error) {
+func handleGrantedAccess(token *jwt.Token, url string, apiKey string) (*[]grants.GrantedAccess, error) {
 	if claims, ok := token.Claims.(*signing.Claims); ok {
 		if claims.Addr == "" {
 			return nil, fmt.Errorf("missing addr claim")
 		}
-		grants, err := grants.GetGrants(url, claims.Addr, apiKey) // temporary interpolation until better configuration solutions
+		grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
 		if err != nil {
 			return nil, err
 		}
-		return grants, nil
+		return grantedAccess, nil
 	}
 	return nil, fmt.Errorf("malformed claims")
 }
