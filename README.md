@@ -1,7 +1,7 @@
 # kong-wallet-jwt
 
 Adds an extra layer of security and functions as a RBAC authority. 
-This plugin will verify a user signed JWT in the `Authorization` header.
+This plugin will verify a user signed JWT as a Bearer token in the `Authorization` header.
 The plugin will also function as a RBAC authority and inject a `x-wallet-access` header into the request containing delegated access rights assigned to the wallet that signed the JWT.
 These rights are pulled from a running instance of the RBAC service.
 
