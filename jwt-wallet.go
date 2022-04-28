@@ -13,8 +13,10 @@ import (
 )
 
 type Config struct {
-	RBAC   string `json:"rbac"`
-	APIKey string `json:"apikey"`
+	RBAC         string `json:"rbac"`
+	APIKey       string `json:"apikey"`
+	AuthHeader   string `json:"authHeader"`
+	AccessHeader string `json:"accessHeader"`
 }
 
 func New() interface{} {
@@ -39,7 +41,10 @@ func (conf Config) Access(kong *pdk.PDK) {
 	x := make(map[string][]string)
 	x["Content-Type"] = []string{"application/json"}
 
-	header, err := kong.Request.GetHeader("Authorization")
+	if conf.AuthHeader == "" {
+		conf.AuthHeader = "Authorization"
+	}
+	header, err := kong.Request.GetHeader(conf.AuthHeader)
 	if err != nil {
 		kong.Log.Warn("missing auth header")
 		kong.Response.Exit(401, "{}", x)
@@ -72,7 +77,10 @@ func (conf Config) Access(kong *pdk.PDK) {
 		kong.Response.Exit(500, "something went wrong", x)
 		return
 	}
-	kong.ServiceRequest.AddHeader("x-wallet-access", string(accessJson))
+	if conf.AccessHeader == "" {
+		conf.AccessHeader = "x-wallet-access"
+	}
+	kong.ServiceRequest.AddHeader(conf.AccessHeader, string(accessJson))
 
 	kong.Log.Warn(tok)
 

@@ -1,31 +1,67 @@
 # kong-wallet-jwt
 
-Adds an extra layer of security and functions as a role authority. This plugin takes in an `Authorization` header with a user signed JWT token.  With a verified JWT this plugin can also function as a role authority and provide `x-wallet-access` that belong to the associated account that signed the JWT. 
+Adds an extra layer of security and functions as a RBAC authority. 
+This plugin will verify a user signed JWT as a Bearer token in the `Authorization` header.
+The plugin will also function as a RBAC authority and inject a `x-wallet-access` header into the request containing delegated access rights assigned to the wallet that signed the JWT.
+These rights are pulled from a running instance of the RBAC service.
+
+## Output
+Wallet access header content:
+```json
+{
+	"address": "your_wallet_address",
+	"name": "your wallet name",
+	"grants": [
+		{
+			"address": "grantor_address",
+			"name": "grantor name",
+			"authzGrants": ["list", "of", "authz", "grants"],
+			"applications": [
+				{
+					"name": "application_name",
+					"permissions": ["list", "of", "off-chain", "application", "permissions"]
+				}
+			]
+		}
+	]
+}
+```
 
 ## Getting started
 
-When using this plugin you can use `go install github.com/provenance-io/kong-jwt-wallet/cmd/jwt-wallet@v0.3.0` directly or download a release version (soon to come)
+When using this plugin you can use `go install github.com/provenance-io/kong-jwt-wallet/cmd/jwt-wallet@v0.7.0` directly or download a release version (soon to come)
 
 ### Configuration
 
-When using the plugin, add it to your kong service definition and include an rbac url of choice. Currently the rbac url should contain an `{addr}` string target. 
-```
+To use the plugin, add it to your kong service definition.
+
+Minimum configuration:
+```yaml
   plugins:
   - name: jwt-wallet
     config:
-      rbac: http://localhost:8888/{addr}/
+      rbac: http://localhost:8888/rbac/api/v1/subjects/{addr}/grants
 ```
+
+Configuration options:
+* `rbac`* - Full path to your running RBAC service. The rbac url should contain an `{addr}` string representing the wallet address.
+* `apikey` - API Key to use when making a call to the RBAC service
+* `authHeader` - The name of the request header containing the JWT. Defaults to "Authorization"
+* `accessHeader` - The name of the header to inject with the wallet access JSON. Defaults to "x-wallet-access"
+
+*=required
+
 
 ### Running locally
 
 Run via docker:
-```
+```bash
 make docker && make docker-run
 ```
 
 Use `config.yml` to update the settings for your local running environment.
 Point the `rbac` url to a running copy of RBAC Service or serve the included example payload from the `http/` directory by running: 
-```
+```bash
 make http
 ```
 
@@ -36,28 +72,28 @@ When using the example payload, use the value from `/token` as the JWT/Bearer to
 
 This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes (base64). If wanting grants to return then also include the wallet address as the `addr` field. 
 
-### Header: 
+### Header
 
-```
+```json
 {
   "alg": "ES256K",
   "typ": "JWT"
 }
 ```
 
-### Payload: 
+### Payload
 
-```
+```json
 {
-  "addr": wallet_address,
-  "sub": wallet_public_key,
-  "iss": your_org,
+  "addr": "wallet_address",
+  "sub": "wallet_public_key",
+  "iss": "your_org",
   "iat": 1609459200,
   "exp": 4070908800
 }
 ```
 
-### Signature: 
+### Signature
 
 ```
 ecdsa.Sign(
@@ -65,7 +101,7 @@ ecdsa.Sign(
   base64UrlEncode(payload)))
 ```
 
-Full token representation: 
+### Full token representation
 
 ```
 base64UrlEncode(header) + "." +
