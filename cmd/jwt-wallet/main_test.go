@@ -151,7 +151,7 @@ func TestValidJwt(t *testing.T) {
 	pkBytes, _ := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
 	prvk, pubk := secp256k1.PrivKeyFromBytes(secp256k1.S256(), pkBytes)
 
-	claims := GenerateClaims("tb", "tb1y34frcm3hmnmgszmnxufcyw4aeslplsz9wq7nw", pubk)
+	claims := GenerateClaims("tp", "tp1y34frcm3hmnmgszmnxufcyw4aeslplsz8hkuxv", pubk)
 	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, _ := token.SignedString(prvk)
 
@@ -181,7 +181,7 @@ func TestIncorrectAddress(t *testing.T) {
 	pkBytes, _ := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
 	prvk, pubk := secp256k1.PrivKeyFromBytes(secp256k1.S256(), pkBytes)
 
-	claims := GenerateClaims("tb", "tp1rr4d0eu62pgt4edw38d2ev27798pfhdhp5ttha", pubk)
+	claims := GenerateClaims("tp", "tp1rr4d0eu62pgt4edw38d2ev27798pfhdhp5ttha", pubk)
 	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, _ := token.SignedString(prvk)
 

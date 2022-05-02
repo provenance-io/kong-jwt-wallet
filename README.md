@@ -73,7 +73,7 @@ When using the example payload, use the value from `/token` as the JWT/Bearer to
 This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes (base64). If wanting grants to return then also include the wallet address as the `addr` field and the hrp as the `hrp` field [^1]. 
 
 [^1]: when using the `addr` the address will be verified it belongs to the given public key in the `sub`. When using `addr` the `hrp` of the wallet must be supplied. 
-   The `hrp` is the human readable path that is prepended to blockchain wallets to denote which blockchain they belong to. Provenance is `tb` for tesetnet and `pb` for mainnet. 
+   The `hrp` is the human readable path that is prepended to blockchain wallets to denote which blockchain they belong to. Provenance is `tp` for tesetnet and `pb` for mainnet. 
    
 
 ### Header
