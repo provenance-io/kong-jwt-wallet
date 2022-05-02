@@ -1,12 +1,17 @@
 package jwtwallet
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"hash"
 	"strings"
 
+	"github.com/cosmos/btcutil/bech32"
 	"github.com/provenance-io/kong-jwt-wallet/grants"
 	"github.com/provenance-io/kong-jwt-wallet/signing"
+	"golang.org/x/crypto/ripemd160"
 
 	"github.com/Kong/go-pdk"
 	"github.com/golang-jwt/jwt/v4"
@@ -60,7 +65,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 
 	tok, err := handleToken(kong, strings.TrimSpace(authToken[1]))
 	if err != nil {
-		kong.Log.Warn("err:" + err.Error())
+		kong.Log.Warn("err: " + err.Error())
 		kong.Response.Exit(401, "{}", x)
 		return
 	}
@@ -68,7 +73,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 	access, err := handleGrantedAccess(tok, conf.RBAC, conf.APIKey)
 	if err != nil {
 		kong.Log.Warn("err: " + err.Error())
-		kong.Response.Exit(400, "account does not exist", x)
+		kong.Response.Exit(400, err.Error(), x)
 		return
 	}
 
@@ -93,6 +98,14 @@ func handleGrantedAccess(token *jwt.Token, url string, apiKey string) (*[]grants
 		if claims.Addr == "" {
 			return nil, fmt.Errorf("missing addr claim")
 		}
+		if claims.Hrp == "" {
+			return nil, fmt.Errorf("missing hrp claim")
+		}
+
+		if !verifyAddress(claims.Addr, claims.Subject, claims.Hrp) {
+			return nil, fmt.Errorf("address does not match public key")
+		}
+
 		grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
 		if err != nil {
 			return nil, err
@@ -112,4 +125,42 @@ func handleToken(kong *pdk.PDK, tokenString string) (*jwt.Token, error) {
 		return nil, err
 	}
 	return token, nil
+}
+
+func verifyAddress(addr string, pubKey string, hrp string) bool {
+	keyB64 := strings.Split(pubKey, ",")[0]
+	keyBytes, err := base64.RawURLEncoding.DecodeString(keyB64)
+
+	if err != nil {
+		fmt.Printf("Could not decode public key")
+		return false
+	}
+
+	hash160Data := Hash160(keyBytes)
+
+	dataBits, err := bech32.ConvertBits(hash160Data, 8, 5, true)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return false
+	}
+
+	pubKeyWallet, err := bech32.Encode(hrp, dataBits)
+
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return false
+	}
+
+	return strings.EqualFold(addr, pubKeyWallet)
+}
+
+// Calculate the hash of hasher over buf.
+func calcHash(buf []byte, hasher hash.Hash) []byte {
+	hasher.Write(buf)
+	return hasher.Sum(nil)
+}
+
+// Hash160 calculates the hash ripemd160(sha256(b)).
+func Hash160(buf []byte) []byte {
+	return calcHash(calcHash(buf, sha256.New()), ripemd160.New())
 }

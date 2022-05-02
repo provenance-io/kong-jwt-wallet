@@ -28,6 +28,7 @@ func main() {
 
 	claims := &signing.Claims{
 		Addr: "tp1uz5g72pvfrdnm9qnjpyvsnwc64d4wygyqanx2t",
+		Hrp:  "tp",
 		RegisteredClaims: *&jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Date(2099, 1, 1, 0, 0, 0, 0, loc)),
 			IssuedAt:  jwt.NewNumericDate(time.Date(2021, 1, 1, 0, 0, 0, 0, loc)),

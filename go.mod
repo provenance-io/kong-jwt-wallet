@@ -11,7 +11,9 @@ require (
 require golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
 
 require (
-	github.com/btcsuite/btcd v0.22.0-beta // indirect
+	github.com/btcsuite/btcd v0.22.0-beta.0.20220111032746-97732e52810c // indirect
+	github.com/btcsuite/btcd/btcutil v1.1.1 // indirect
+	github.com/cosmos/btcutil v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect

@@ -15,6 +15,7 @@ import (
 
 type Claims struct {
 	Addr string `json:"addr"`
+	Hrp  string `json:"hrp"`
 	jwt.RegisteredClaims
 }
 
