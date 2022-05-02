@@ -136,22 +136,22 @@ func verifyAddress(addr string, pubKey string, hrp string) bool {
 		return false
 	}
 
-	hash160Data := Hash160(keyBytes)
+	hash160Bytes := Hash160(keyBytes)
 
-	dataBits, err := bech32.ConvertBits(hash160Data, 8, 5, true)
+	dataBits, err := bech32.ConvertBits(hash160Bytes, 8, 5, true)
 	if err != nil {
 		fmt.Printf("error: %v", err)
 		return false
 	}
 
-	pubKeyWallet, err := bech32.Encode(hrp, dataBits)
+	pubKeyAddr, err := bech32.Encode(hrp, dataBits)
 
 	if err != nil {
 		fmt.Printf("error: %v", err)
 		return false
 	}
 
-	return strings.EqualFold(addr, pubKeyWallet)
+	return strings.EqualFold(addr, pubKeyAddr)
 }
 
 // Calculate the hash of hasher over buf.
