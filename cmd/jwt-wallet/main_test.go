@@ -82,6 +82,7 @@ func TestMissingAddrClaim(t *testing.T) {
 	env.DoHttp(config)
 
 	assert.Equal(t, 400, env.ClientRes.Status)
+	assert.Equal(t, "missing addr claim", env.ClientRes.Body)
 }
 
 func TestMissingSubClaim(t *testing.T) {
@@ -108,7 +109,7 @@ func TestExpiredToken(t *testing.T) {
 	pkBytes, _ := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
 	prvk, pubk := secp256k1.PrivKeyFromBytes(secp256k1.S256(), pkBytes)
 
-	claims := GenerateClaims("tbMadeUpAddr", pubk)
+	claims := GenerateClaims("tb1MadeUpAddr", pubk)
 	claims.ExpiresAt = jwt.NewNumericDate(time.Date(1999, 12, 31, 11, 10, 0, 0, time.Local))
 	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, _ := token.SignedString(prvk)
@@ -129,7 +130,7 @@ func TestValidJwt(t *testing.T) {
 	pkBytes, _ := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
 	prvk, pubk := secp256k1.PrivKeyFromBytes(secp256k1.S256(), pkBytes)
 
-	claims := GenerateClaims("tbMadeUpAddr", pubk)
+	claims := GenerateClaims("tp1y34frcm3hmnmgszmnxufcyw4aeslplsz8hkuxv", pubk)
 	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, _ := token.SignedString(prvk)
 
@@ -153,6 +154,27 @@ func TestValidJwt(t *testing.T) {
 	assert.Equal(t, 200, env.ClientRes.Status)
 	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
 	assert.Equal(t, xRoles, env.ServiceReq.Headers.Get("x-wallet-access"))
+}
+
+func TestIncorrectAddress(t *testing.T) {
+	pkBytes, _ := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
+	prvk, pubk := secp256k1.PrivKeyFromBytes(secp256k1.S256(), pkBytes)
+
+	claims := GenerateClaims("tp1rr4d0eu62pgt4edw38d2ev27798pfhdhp5ttha", pubk)
+	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
+	sig, _ := token.SignedString(prvk)
+
+	env, err := test.New(t, test.Request{
+		Method:  "GET",
+		Url:     "http://example.com",
+		Headers: map[string][]string{"Authorization": {"Bearer " + sig}},
+	})
+	assert.NoError(t, err)
+
+	env.DoHttp(config)
+
+	assert.Equal(t, 400, env.ClientRes.Status)
+	assert.Equal(t, "address does not match public key", env.ClientRes.Body)
 }
 
 func GenerateClaims(addr string, pubKey *secp256k1.PublicKey) *signing.Claims {

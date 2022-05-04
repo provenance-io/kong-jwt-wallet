@@ -70,7 +70,9 @@ When using the example payload, use the value from `/token` as the JWT/Bearer to
 
 ## Creating a JWT
 
-This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes (base64). If wanting grants to return then also include the wallet address as the `addr` field. 
+This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes and **Base64Url Encoded**. If wanting grants to return then also include the wallet address as the `addr` field. 
+
+   
 
 ### Header
 
@@ -86,7 +88,7 @@ This example uses the standard jwt format but sings with an `secp256k1` elliptic
 ```json
 {
   "addr": "wallet_address",
-  "sub": "wallet_public_key",
+  "sub": base64UrlEncode("wallet_public_key"),
   "iss": "your_org",
   "iat": 1609459200,
   "exp": 4070908800
