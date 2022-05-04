@@ -70,10 +70,8 @@ When using the example payload, use the value from `/token` as the JWT/Bearer to
 
 ## Creating a JWT
 
-This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes (base64). If wanting grants to return then also include the wallet address as the `addr` field and the hrp as the `hrp` field [^1]. 
+This example uses the standard jwt format but sings with an `secp256k1` elliptic curve key. When generating your jwt you must set the public key as the `sub` field on the payload and it must be compressed public key bytes and **Base64Url Encoded**. If wanting grants to return then also include the wallet address as the `addr` field. 
 
-[^1]: when using the `addr` field, the address will be verified it belongs to the given public key provided in the `sub` field. When using `addr` the `hrp` of the wallet must be supplied as well. 
-   The `hrp` is the human readable path that is prepended to blockchain wallets to denote which blockchain they belong to and also used as a checksum in the address via BIP173. Provenance uses `tp` for tesetnet and `pb` for mainnet. 
    
 
 ### Header
@@ -91,7 +89,7 @@ This example uses the standard jwt format but sings with an `secp256k1` elliptic
 {
   "addr": "wallet_address",
   "hrp": "human_readable_path",
-  "sub": "wallet_public_key",
+  "sub": base64UrlEncode("wallet_public_key"),
   "iss": "your_org",
   "iat": 1609459200,
   "exp": 4070908800

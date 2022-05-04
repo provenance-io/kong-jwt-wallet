@@ -70,7 +70,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 
-	access, err := handleGrantedAccess(tok, conf.RBAC, conf.APIKey)
+	access, err := handleGrantedAccess(tok, conf.RBAC, conf.APIKey, kong)
 	if err != nil {
 		kong.Log.Warn("err: " + err.Error())
 		kong.Response.Exit(400, err.Error(), x)
@@ -93,16 +93,13 @@ func (conf Config) Access(kong *pdk.PDK) {
 
 var parser = jwt.NewParser()
 
-func handleGrantedAccess(token *jwt.Token, url string, apiKey string) (*[]grants.GrantedAccess, error) {
+func handleGrantedAccess(token *jwt.Token, url string, apiKey string, kong *pdk.PDK) (*[]grants.GrantedAccess, error) {
 	if claims, ok := token.Claims.(*signing.Claims); ok {
 		if claims.Addr == "" {
 			return nil, fmt.Errorf("missing addr claim")
 		}
-		if claims.Hrp == "" {
-			return nil, fmt.Errorf("missing hrp claim")
-		}
 
-		if !verifyAddress(claims.Addr, claims.Subject, claims.Hrp) {
+		if !verifyAddress(claims.Addr, claims.Subject, kong) {
 			return nil, fmt.Errorf("address does not match public key")
 		}
 
@@ -127,12 +124,21 @@ func handleToken(kong *pdk.PDK, tokenString string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func verifyAddress(addr string, pubKey string, hrp string) bool {
+func verifyAddress(addr string, pubKey string, kong *pdk.PDK) bool {
+	seperator := strings.LastIndex(addr, "1")
+
+	if seperator < 0 {
+		kong.Log.Err("address missing 1 seperator")
+		return false
+	}
+
+	hrp := addr[0:seperator]
+
 	keyB64 := strings.Split(pubKey, ",")[0]
 	keyBytes, err := base64.RawURLEncoding.DecodeString(keyB64)
 
 	if err != nil {
-		fmt.Printf("Could not decode public key")
+		kong.Log.Err("Could not decode public key")
 		return false
 	}
 
@@ -140,14 +146,14 @@ func verifyAddress(addr string, pubKey string, hrp string) bool {
 
 	dataBits, err := bech32.ConvertBits(hash160Bytes, 8, 5, true)
 	if err != nil {
-		fmt.Printf("error: %v", err)
+		kong.Log.Err("error: %v", err)
 		return false
 	}
 
 	pubKeyAddr, err := bech32.Encode(hrp, dataBits)
 
 	if err != nil {
-		fmt.Printf("error: %v", err)
+		kong.Log.Err("error: %v", err)
 		return false
 	}
 
