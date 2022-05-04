@@ -128,7 +128,7 @@ func verifyAddress(addr string, pubKey string, kong *pdk.PDK) bool {
 	separator := strings.LastIndex(addr, "1")
 
 	if separator < 0 {
-		kong.Log.Err("address missing 1 seperator")
+		kong.Log.Err("address missing 1 separator")
 		return false
 	}
 
