@@ -88,7 +88,6 @@ This example uses the standard jwt format but sings with an `secp256k1` elliptic
 ```json
 {
   "addr": "wallet_address",
-  "hrp": "human_readable_path",
   "sub": base64UrlEncode("wallet_public_key"),
   "iss": "your_org",
   "iat": 1609459200,
