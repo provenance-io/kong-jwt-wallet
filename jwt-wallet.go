@@ -125,14 +125,14 @@ func handleToken(kong *pdk.PDK, tokenString string) (*jwt.Token, error) {
 }
 
 func verifyAddress(addr string, pubKey string, kong *pdk.PDK) bool {
-	seperator := strings.LastIndex(addr, "1")
+	separator := strings.LastIndex(addr, "1")
 
-	if seperator < 0 {
+	if separator < 0 {
 		kong.Log.Err("address missing 1 seperator")
 		return false
 	}
 
-	hrp := addr[0:seperator]
+	hrp := addr[0:separator]
 
 	keyB64 := strings.Split(pubKey, ",")[0]
 	keyBytes, err := base64.RawURLEncoding.DecodeString(keyB64)
