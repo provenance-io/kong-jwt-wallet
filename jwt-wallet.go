@@ -22,7 +22,7 @@ type Config struct {
 	APIKey       string `json:"apikey"`
 	AuthHeader   string `json:"authHeader"`
 	AccessHeader string `json:"accessHeader"`
-	IncludeSender  bool `json:"includeSender"`
+	IncludeSenderHeader  bool `json:"includeSenderHeader"`
 }
 
 func New() interface{} {
@@ -91,7 +91,7 @@ func (conf Config) Access(kong *pdk.PDK) {
         kong.ServiceRequest.AddHeader(conf.AccessHeader, string(accessJson))
     }
 
-    if conf.IncludeSender {
+    if conf.IncludeSenderHeader {
         kong.ServiceRequest.AddHeader("x-sender", sender)
     }
 

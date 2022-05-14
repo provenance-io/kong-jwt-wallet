@@ -32,12 +32,12 @@ func (m *MockClient) Do(req *http.Request) (*http.Response, error) {
 
 var config = &jwtwallet.Config{
 	RBAC: "localhost:2000",
-	IncludeSender: true,
+	IncludeSenderHeader: true,
 }
 
 var emptyRBACUrlConfig = &jwtwallet.Config{
 	RBAC: "",
-	IncludeSender: true,
+	IncludeSenderHeader: true,
 }
 
 func init() {

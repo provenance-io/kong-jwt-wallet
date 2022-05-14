@@ -10,7 +10,7 @@ services:
     config:
       authHeader: Authorization
       accessHeader: x-wallet-access
-      includeSender: false
+      includeSenderHeader: false
 #      rbac: http://docker.for.mac.host.internal:8069/rbac/api/v1/subjects/{addr}/grants  # Running RBAC Service on Mac
       rbac: http://localhost:8069/rbac/api/v1/subjects/{addr}/grants                     # Running RBAC Service on Linux
 #      rbac: http://docker.for.mac.host.internal:8888/{addr}/index.html                   # Use when running `make http` on Mac

@@ -48,7 +48,7 @@ Configuration options:
 * `apikey` - API Key to use when making a call to the RBAC service
 * `authHeader` - The name of the request header containing the JWT. Defaults to "Authorization"
 * `accessHeader` - The name of the header to inject with the wallet access JSON. Defaults to "x-wallet-access"
-* `includeSender` - Option to include the `x-sender` header which is the addr claim of the user signed JWT. Defaults to false
+* `includeSenderHeader` - Option to include the `x-sender` header which is the addr claim of the user signed JWT. Defaults to false
 
 *=required
 
