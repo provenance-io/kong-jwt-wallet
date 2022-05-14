@@ -22,6 +22,7 @@ type Config struct {
 	APIKey       string `json:"apikey"`
 	AuthHeader   string `json:"authHeader"`
 	AccessHeader string `json:"accessHeader"`
+	IncludeSender  bool `json:"includeSender"`
 }
 
 func New() interface{} {
@@ -70,7 +71,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 		return
 	}
 
-	access, err := handleGrantedAccess(tok, conf.RBAC, conf.APIKey, kong)
+	access, sender, err := handleGrantedAccess(tok, conf.RBAC, conf.APIKey, kong)
 	if err != nil {
 		kong.Log.Warn("err: " + err.Error())
 		kong.Response.Exit(400, err.Error(), x)
@@ -85,7 +86,14 @@ func (conf Config) Access(kong *pdk.PDK) {
 	if conf.AccessHeader == "" {
 		conf.AccessHeader = "x-wallet-access"
 	}
-	kong.ServiceRequest.AddHeader(conf.AccessHeader, string(accessJson))
+
+	if conf.RBAC != "" {
+        kong.ServiceRequest.AddHeader(conf.AccessHeader, string(accessJson))
+    }
+
+    if conf.IncludeSender {
+        kong.ServiceRequest.AddHeader("x-sender", sender)
+    }
 
 	kong.Log.Warn(tok)
 
@@ -93,23 +101,26 @@ func (conf Config) Access(kong *pdk.PDK) {
 
 var parser = jwt.NewParser()
 
-func handleGrantedAccess(token *jwt.Token, url string, apiKey string, kong *pdk.PDK) (*[]grants.GrantedAccess, error) {
+func handleGrantedAccess(token *jwt.Token, url string, apiKey string, kong *pdk.PDK) (*[]grants.GrantedAccess, string, error) {
 	if claims, ok := token.Claims.(*signing.Claims); ok {
 		if claims.Addr == "" {
-			return nil, fmt.Errorf("missing addr claim")
+			return nil, "", fmt.Errorf("missing addr claim")
 		}
 
 		if !verifyAddress(claims.Addr, claims.Subject, kong) {
-			return nil, fmt.Errorf("address does not match public key")
+			return nil, "", fmt.Errorf("address does not match public key")
 		}
 
-		grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
-		if err != nil {
-			return nil, err
+        if url != "" {
+            grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
+            if err != nil {
+                return nil, "", err
+            }
+            return grantedAccess, claims.Addr, nil
 		}
-		return grantedAccess, nil
+		return nil, claims.Addr, nil
 	}
-	return nil, fmt.Errorf("malformed claims")
+	return nil, "", fmt.Errorf("malformed claims")
 }
 
 func handleToken(kong *pdk.PDK, tokenString string) (*jwt.Token, error) {

@@ -44,10 +44,11 @@ Minimum configuration:
 ```
 
 Configuration options:
-* `rbac`* - Full path to your running RBAC service. The rbac url should contain an `{addr}` string representing the wallet address.
+* `rbac`* - Full path to your running RBAC service. The rbac url should contain an `{addr}` string representing the wallet address. If empty string `""` then plugin will only verify a user signed JWT and will not get delegated access rights or include the x-wallet-access header
 * `apikey` - API Key to use when making a call to the RBAC service
 * `authHeader` - The name of the request header containing the JWT. Defaults to "Authorization"
 * `accessHeader` - The name of the header to inject with the wallet access JSON. Defaults to "x-wallet-access"
+* `includeSender` - Option to include the `x-sender` header which is the addr claim of the user signed JWT. Defaults to false
 
 *=required
 
