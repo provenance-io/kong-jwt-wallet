@@ -35,7 +35,7 @@ When using this plugin you can use `go install github.com/provenance-io/kong-jwt
 
 To use the plugin, add it to your kong service definition.
 
-Minimum configuration:
+Recommended configuration:
 ```yaml
   plugins:
   - name: jwt-wallet
@@ -45,13 +45,12 @@ Minimum configuration:
 
 Configuration options:
 * `rbac`* - Full path to your running RBAC service. The rbac url should contain an `{addr}` string representing the wallet address. If not set then the plugin will only verify a user signed JWT and will not retrieve delegated access rights or include the x-wallet-access header. 
-The default option is included as a means to use the plugin to only verify the user signed JWT. 
 * `apikey` - API Key to use when making a call to the RBAC service
 * `authHeader` - The name of the request header containing the JWT. Defaults to "Authorization"
 * `accessHeader` - The name of the header to inject with the wallet access JSON. Defaults to "x-wallet-access". Only injected when rbac configuration is set
-* `includeSenderHeader` - Option to return the `x-sender` header which is the addr claim of the user signed JWT. Defaults to false
+* `senderHeader` - The name of the header to inject with the addr claim of the user signed JWT. If not set then will not inject
 
-*=required to get delegated access rights
+*= Required to get delegated access rights
 
 
 ### Running locally
