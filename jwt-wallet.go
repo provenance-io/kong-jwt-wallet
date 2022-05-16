@@ -111,12 +111,12 @@ func handleGrantedAccess(token *jwt.Token, url string, apiKey string, kong *pdk.
 			return nil, "", fmt.Errorf("address does not match public key")
 		}
 
-        if url != "" {
-            grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
-            if err != nil {
-                return nil, "", err
-            }
-            return grantedAccess, claims.Addr, nil
+		if url != "" {
+			grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
+			if err != nil {
+				return nil, "", err
+			}
+			return grantedAccess, claims.Addr, nil
 		}
 		return nil, claims.Addr, nil
 	}

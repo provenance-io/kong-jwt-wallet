@@ -135,7 +135,7 @@ func TestExpiredToken(t *testing.T) {
 func TestValidJwt(t *testing.T) {
 	pkBytes, _ := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
 	prvk, pubk := secp256k1.PrivKeyFromBytes(secp256k1.S256(), pkBytes)
-    addr := "tp1y34frcm3hmnmgszmnxufcyw4aeslplsz8hkuxv"
+	addr := "tp1y34frcm3hmnmgszmnxufcyw4aeslplsz8hkuxv"
 	claims := GenerateClaims(addr, pubk)
 	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, _ := token.SignedString(prvk)
@@ -159,15 +159,15 @@ func TestValidJwt(t *testing.T) {
 
 	assert.Equal(t, 200, env.ClientRes.Status)
 	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
-    assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-sender"))
+	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-sender"))
 	assert.Equal(t, xRoles, env.ServiceReq.Headers.Get("x-wallet-access"))
-    assert.Equal(t, addr, env.ServiceReq.Headers.Get("x-sender"))
+	assert.Equal(t, addr, env.ServiceReq.Headers.Get("x-sender"))
 }
 
 func TestValidJwtWithEmptyRbacUrl(t *testing.T) {
 	pkBytes, _ := hex.DecodeString("8C037EFC21AB3F0F8D32CF209D90FDBF41D10071FF600BA66A30EFA994F268A3")
 	prvk, pubk := secp256k1.PrivKeyFromBytes(secp256k1.S256(), pkBytes)
-    addr := "tp1y34frcm3hmnmgszmnxufcyw4aeslplsz8hkuxv"
+	addr := "tp1y34frcm3hmnmgszmnxufcyw4aeslplsz8hkuxv"
 	claims := GenerateClaims(addr, pubk)
 	token := jwt.NewWithClaims(signing.NewSecp256k1Signer(), claims)
 	sig, _ := token.SignedString(prvk)
@@ -182,9 +182,9 @@ func TestValidJwtWithEmptyRbacUrl(t *testing.T) {
 	env.DoHttp(emptyRBACUrlConfig)
 
 	assert.Equal(t, 200, env.ClientRes.Status)
-    assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-sender"))
-    assert.Empty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
-    assert.Equal(t, addr, env.ServiceReq.Headers.Get("x-sender"))
+	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-sender"))
+	assert.Empty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
+	assert.Equal(t, addr, env.ServiceReq.Headers.Get("x-sender"))
 }
 
 func TestIncorrectAddress(t *testing.T) {
