@@ -32,11 +32,7 @@ func (m *MockClient) Do(req *http.Request) (*http.Response, error) {
 
 var config = &jwtwallet.Config{
 	RBAC: "localhost:2000",
-	IncludeSenderHeader: true,
-}
-
-var emptyRBACUrlConfig = &jwtwallet.Config{
-	IncludeSenderHeader: true,
+	SenderHeader: "x-sender",
 }
 
 func init() {
@@ -155,7 +151,7 @@ func TestValidJwt(t *testing.T) {
 	assert.NoError(t, err)
 
 	env.DoHttp(config)
-	println(env.ServiceReq.Headers.Get("Authorization"))
+
 	assert.Equal(t, 200, env.ClientRes.Status)
 	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
 	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-sender"))
@@ -174,10 +170,13 @@ func TestValidJwtWithEmptyRbacUrl(t *testing.T) {
 	env, err := test.New(t, test.Request{
 		Method:  "GET",
 		Url:     "http://example.com",
-		Headers: map[string][]string{"Authorization": {"Bearer " + sig}},
+		Headers: map[string][]string{"Authorization": {"Bearer " + sig}, "x-sender": {"test"}},
 	})
 	assert.NoError(t, err)
 
+	var emptyRBACUrlConfig = &jwtwallet.Config{
+		SenderHeader: "x-sender",
+	}
 	env.DoHttp(emptyRBACUrlConfig)
 
 	assert.Equal(t, 200, env.ClientRes.Status)
