@@ -36,7 +36,6 @@ var config = &jwtwallet.Config{
 }
 
 var emptyRBACUrlConfig = &jwtwallet.Config{
-	RBAC: "",
 	IncludeSenderHeader: true,
 }
 
@@ -156,7 +155,7 @@ func TestValidJwt(t *testing.T) {
 	assert.NoError(t, err)
 
 	env.DoHttp(config)
-
+	println(env.ServiceReq.Headers.Get("Authorization"))
 	assert.Equal(t, 200, env.ClientRes.Status)
 	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
 	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-sender"))
