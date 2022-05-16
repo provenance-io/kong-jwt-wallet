@@ -88,8 +88,8 @@ func (conf Config) Access(kong *pdk.PDK) {
 	}
 
 	if conf.RBAC != "" {
-        kong.ServiceRequest.AddHeader(conf.AccessHeader, string(accessJson))
-    }
+			kong.ServiceRequest.AddHeader(conf.AccessHeader, string(accessJson))
+	}
 
 	if conf.SenderHeader != "" {
 			kong.ServiceRequest.SetHeader(conf.SenderHeader, sender)
