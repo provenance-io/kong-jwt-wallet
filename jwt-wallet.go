@@ -101,7 +101,7 @@ func (conf Config) Access(kong *pdk.PDK) {
 
 var parser = jwt.NewParser()
 
-func handleGrantedAccess(token *jwt.Token, url string, apiKey string, kong *pdk.PDK) (*[]grants.GrantedAccess, string, error) {
+func handleGrantedAccess(token *jwt.Token, url string, apiKey string, kong *pdk.PDK) (*grants.SubjectResponse, string, error) {
 	if claims, ok := token.Claims.(*signing.Claims); ok {
 		if claims.Addr == "" {
 			return nil, "", fmt.Errorf("missing addr claim")
@@ -112,11 +112,11 @@ func handleGrantedAccess(token *jwt.Token, url string, apiKey string, kong *pdk.
 		}
 
 		if url != "" {
-			grantedAccess, err := grants.GetGrants(url, claims.Addr, apiKey)
+			subjectResponse, err := grants.GetGrants(url, claims.Addr, apiKey)
 			if err != nil {
 				return nil, "", err
 			}
-			return grantedAccess, claims.Addr, nil
+			return subjectResponse, claims.Addr, nil
 		}
 		return nil, claims.Addr, nil
 	}

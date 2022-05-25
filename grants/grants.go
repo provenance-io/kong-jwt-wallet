@@ -36,7 +36,7 @@ func init() {
 	Client = &http.Client{}
 }
 
-func GetGrants(grantsURL string, address string, apiKey string) (*[]GrantedAccess, error) {
+func GetGrants(grantsURL string, address string, apiKey string) (*SubjectResponse, error) {
 	uri := strings.ReplaceAll(grantsURL, "{addr}", address)
 	request, _ := http.NewRequest("GET", uri, nil)
 	request.Header.Add("x-sender", address)
@@ -61,5 +61,5 @@ func GetGrants(grantsURL string, address string, apiKey string) (*[]GrantedAcces
 		return nil, err
 	}
 
-	return &response.Grants, nil
+	return &response, nil
 }

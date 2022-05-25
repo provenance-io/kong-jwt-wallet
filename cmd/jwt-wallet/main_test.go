@@ -153,7 +153,7 @@ func TestValidJwt(t *testing.T) {
 	assert.Equal(t, 200, env.ClientRes.Status)
 	assert.NotEmpty(t, env.ServiceReq.Headers.Get("x-wallet-access"))
 	assert.Empty(t, env.ServiceReq.Headers.Get("x-sender"))
-	assert.Equal(t, xRoles, env.ServiceReq.Headers.Get("x-wallet-access"))
+	assert.Equal(t, subjectJSONString, env.ServiceReq.Headers.Get("x-wallet-access"))
 }
 
 func TestValidJwtWithEmptyRbacUrl(t *testing.T) {
@@ -220,25 +220,4 @@ func GenerateClaims(addr string, pubKey *secp256k1.PublicKey) *signing.Claims {
 	}
 }
 
-var subjectJSONString = `
-{
-	"address": "1337-wallet",
-	"name": "jwt-wallet",
-	"grants": [
-		{
-			"address": "1337-wallet",
-			"name": "jwt-wallet",
-			"authzGrants": [],
-			"applications": [
-				{
-					"name": "myapp",
-					"permissions": [
-						"1337_role"
-					]
-				}
-			]
-		}
-	]
-}`
-
-var xRoles = `[{"address":"1337-wallet","name":"jwt-wallet","authzGrants":[],"applications":[{"name":"myapp","permissions":["1337_role"]}]}]`
+var subjectJSONString = `{"address":"1337-wallet","name":"jwt-wallet","grants":[{"address":"1337-wallet","name":"jwt-wallet","authzGrants":[],"applications":[{"name":"myapp","permissions":["1337_role"]}]}]}`
