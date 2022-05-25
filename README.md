@@ -47,7 +47,7 @@ Configuration options:
 * `rbac`* - Full path to your running RBAC service. The rbac url should contain an `{addr}` string representing the wallet address. If not set then the plugin will only verify a user signed JWT and will not retrieve delegated access rights or include the x-wallet-access header. 
 * `apikey` - API Key to use when making a call to the RBAC service
 * `authHeader` - The name of the request header containing the JWT. Defaults to "Authorization". 
-- Requires the Bearer token format e.g {authHeader} Bearer {jwt}
+  - Requires the Bearer token format e.g {authHeader} Bearer {jwt}
 * `accessHeader` - The name of the header to inject with the wallet access JSON. Defaults to "x-wallet-access". Only injected when rbac configuration is set
 * `senderHeader` - The name of the header to inject with the addr claim of the user signed JWT. If not set then will not inject
 
