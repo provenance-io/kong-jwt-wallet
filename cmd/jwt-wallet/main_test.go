@@ -220,4 +220,4 @@ func GenerateClaims(addr string, pubKey *secp256k1.PublicKey) *signing.Claims {
 	}
 }
 
-var subjectJSONString = `{"address":"1337-wallet","name":"jwt-wallet","grants":[{"address":"1337-wallet","name":"jwt-wallet","authzGrants":[],"applications":[{"name":"myapp","permissions":["1337_role"]}]}]}`
+var subjectJSONString = `{"address":"1337-wallet","name":"jwt-wallet","grants":[{"address":"1337-wallet","name":"jwt-wallet","applications":[{"name":"myapp","permissions":["1337_role"]}]}]}`
